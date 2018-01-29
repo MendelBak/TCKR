@@ -28,6 +28,10 @@ namespace tckr.Models
         [MinLength(8)]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
+
+        public string Bio { get; set; }
+        
+        public string Homepage { get; set; }
     }
 
     public class LoginViewModel : BaseEntity
