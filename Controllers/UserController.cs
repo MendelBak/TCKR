@@ -59,9 +59,9 @@ namespace tckr.Controllers
                         // Set user id and first name in session for use in identification, future db calls, and for greeting the user.
                         HttpContext.Session.SetInt32("LoggedUserId", NewUser.Id);
                         HttpContext.Session.SetString("LoggedUserName", NewUser.FirstName);
-                        
+
                         // Redirect to Account method in Account controller.
-                        return RedirectToAction("Account", "Account");
+                        return RedirectToAction("Account");
                     }
                     // Redirect w/ error if email already exists in db.
                     else
@@ -87,6 +87,9 @@ namespace tckr.Controllers
         }
 
 
+
+
+
         // This route handles login requests.
         [HttpPost]
         [Route("LoginSubmit")]
@@ -105,7 +108,7 @@ namespace tckr.Controllers
                         // Set user id and first name in session for use in identification, future db calls, and for greeting the user.
                         HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.Id);
                         HttpContext.Session.SetString("LoggedUserName", LoggedUser.FirstName);
-                        return RedirectToAction("Account", "Account");
+                        return RedirectToAction("Account");
                     }
                     else
                     {
@@ -125,6 +128,41 @@ namespace tckr.Controllers
             {
                 return View("login");
             }
+        }
+
+        [HttpGet]
+        [Route("Account")]
+        public IActionResult Account()
+        {
+            // Check to ensure there is a properly logged in user by checking session.
+            if (HttpContext.Session.GetInt32("LoggedUserId") >= 0)
+            {
+                try
+                {
+
+                    // Save first name in session to display greeting on navbar.
+                    ViewBag.FirstName = HttpContext.Session.GetString("LoggedUserName");
+                    // Save id in session and then send to View using Viewbag
+                    ViewBag.UserId = HttpContext.Session.GetInt32("LoggedUserId");
+                    return View("Account");
+                }
+                // Catch should only fire if there was an error getting/setting sesion id and username to ViewBag but if session id exists (which means a user is logged in). Send to login page.
+                catch
+                {
+                    return View("Login");
+                }
+            }
+            // If no id is in session that means that the user is not properly logged on. Redirect to logout which will end up at LoginPage.
+            return RedirectToAction("Logout");
+        }
+
+        [HttpGet]
+        [Route("Logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            // LoginPage Method is in User Controller
+            return RedirectToAction("LoginPage");
         }
 
         [HttpGet]
