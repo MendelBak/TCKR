@@ -1,0 +1,34 @@
+# PERFORM THESE INSTRUCTIONS IN ORDER. DO NOT SKIP STEPS.
+
+# Constantly update github to save work
+git add .
+git commit -m "" 
+git push
+ 
+# When finished branch and wish to merge with master:
+git checkout master
+git pull origin master (first, pull master to update your copy to the most updated version of master)
+git checkout <branch_name>
+git merge master (this merges the branch w/ master)
+runserver and check to ensure app runs w/o errors) 
+    if merge conflicts:
+        fix conflicts then:
+            git add .
+            git commit -m "message"
+            git push
+git checkout master 
+git merge <branch_name>
+git add .
+git commit -m "<Message>"
+git push
+
+# Don't forget to leave the branch you've been working on as well as the master branch and start a new branch!
+git branch <name> (create new branch)
+git checkout (leave master to work on new branch)
+
+
+#When changes to .gitignore have been made run below command to remove files already uploaded to git.
+git rm -r --cached .
+
+
+
