@@ -1,0 +1,45 @@
+@model tckr.Models.RegisterViewModel
+
+<h1>Registration For A New Bank Account</h1>
+
+<form asp-controller="User" asp-action="NewUser" method="POST" class="form-group">
+    <label asp-for="FirstName">First Name</label>
+    <input asp-for="FirstName" placeholder="First Name" class="form-control" id="FirstName"> 
+    <span asp-validation-for="FirstName"></span>
+
+    <br>
+    <br>
+
+    <label asp-for="LastName">Last Name</label>
+    <input asp-for="LastName" placeholder="Last Name" class="form-control" id="LastName"> 
+    <span asp-validation-for="LastName"></span>
+    
+    <br>
+    <br>
+
+    <label asp-for="Email">Email</label>
+    <input asp-for="Email" placeholder="Email Address" class="form-control" id="Email"> 
+    <span asp-validation-for="Email"></span>
+
+    <br>
+    <br>
+
+    <label asp-for="Password">Password</label>
+    <input asp-for="Password" placeholder="Password" class="form-control" id="Password"> 
+    <span asp-validation-for="Password"></span>
+
+    <br>
+    <br>
+
+    <label asp-for="ConfirmPassword">Confirm Password</label>
+    <input asp-for="ConfirmPassword" placeholder="Confirm Password" class="form-control" id="ConfirmPassword"> 
+    <span asp-validation-for="ConfirmPassword"></span>
+
+    <br>
+    <span> @ViewBag.email </span>
+    <br>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="LoginPage">Already A User? Login here.</a>
+
+</form>
