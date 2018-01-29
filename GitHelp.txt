@@ -4,7 +4,7 @@
 git add .
 git commit -m "" 
 git push
- 
+   
 # When finished branch and wish to merge with master:
 git checkout master
 git pull origin master (first, pull master to update your copy to the most updated version of master)
