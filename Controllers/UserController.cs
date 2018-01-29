@@ -13,7 +13,6 @@ namespace tckr.Controllers
 {
     public class UserController : Controller
     {
-
         private tckrContext _context;
 
         public UserController(tckrContext context)
@@ -128,10 +127,11 @@ namespace tckr.Controllers
             }
         }
 
-
-
-
-
-
+        [HttpGet]
+        [Route("Portfolio")]
+        public IActionResult Portfolio()
+        {
+            return View("Portfolio");
+        }
     }
 }
