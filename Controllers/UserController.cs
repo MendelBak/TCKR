@@ -62,7 +62,7 @@ namespace tckr.Controllers
                         HttpContext.Session.SetString("LoggedUserName", NewUser.FirstName);
                         
                         // Redirect to Account method in Account controller.
-                        return RedirectToAction("Account", "Account");
+                        return RedirectToAction("Profile", "Profile");
                     }
                     // Redirect w/ error if email already exists in db.
                     else
@@ -127,11 +127,5 @@ namespace tckr.Controllers
                 return View("login");
             }
         }
-
-
-
-
-
-
     }
 }
