@@ -1,7 +1,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace tckr.Models
 {
     public class tckrContext : DbContext
@@ -10,6 +9,9 @@ namespace tckr.Models
         public tckrContext(DbContextOptions<tckrContext> options) : base(options) { }
         // First variable should mirror the model class name. Second variable should mirror DB table name. (In PostgreSQL it will create schemas and tables that mirror these variables.) //
         public DbSet<User> Users { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
+        public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<Watchlist> Watchlists { get; set; }
     }
 
 }
