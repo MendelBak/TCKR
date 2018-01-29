@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 namespace tckr.Models
 {
-    public abstract class BaseEntity { }
-
     public class User : BaseEntity
     {
         public int Id { get; set; }
@@ -16,6 +14,4 @@ namespace tckr.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
-
-
 }
