@@ -25,7 +25,7 @@ namespace tckr.Controllers
         [Route("")]
         public IActionResult Index()
         {
-            return View("register");
+            return View("landing");
         }
 
         // Newuser route is the registration route for a new user.
@@ -114,20 +114,20 @@ namespace tckr.Controllers
                     else
                     {
                         ViewBag.loginError = "Sorry, your password was incorrect.";
-                        return View("login");
+                        return View("landing");
                     }
                 }
                 // If no proper creds redirect to login page and return error.
                 catch
                 {
                     ViewBag.loginError = "Sorry, your email or password were incorrect.";
-                    return View("login");
+                    return View("landing");
                 }
             }
             // If form submit was illegal redirect to login and display model validation errors.
             else
             {
-                return View("login");
+                return View("landing");
             }
         }
 

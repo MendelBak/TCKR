@@ -45,4 +45,10 @@ namespace tckr.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }
+
+    public class AllUserViewModels : BaseEntity
+    {
+        public LoginViewModel Log { get; set; }
+        public RegisterViewModel Reg { get; set; }
+    }
 }
