@@ -1,0 +1,32 @@
+@model tckr.Models.StockViewModel
+<h3>@ViewBag.User.FirstName's Portfolio</h3>
+<h1>Total: @ViewBag.Total.ToString("C2")</h1>
+<table>
+    <thead>
+        <th>Symbol</th>
+        <th>Number of Shares</th>
+        <th>Net Worth</th>
+    </thead>
+    <tbody>
+    @foreach (var Stock in ViewBag.Portfolio.Stocks)
+    {
+        <tr>
+            <td>@Stock.Symbol</td>
+            <td>@Stock.Shares</td>
+            <td>@Stock.Value.ToString("C2")</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<form asp-controller="User" asp-action="PortfolioAdd">
+    <label for="Symbol">Stock Symbol</label>
+    <input asp-for="Symbol" class="form-control">
+    <span asp-validation-for="Symbol"></span>
+    <br>
+    <label for="Shares">Number of Shares</label>
+    <input asp-for="Shares" class="form-control">
+    <span asp-validation-for="Shares"></span>
+    <br>
+    <input type="submit" class="btn btn-primary">
+</form>

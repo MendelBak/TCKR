@@ -7,5 +7,10 @@ namespace tckr.Models
     {
         public User User { get; set; }
         public List<Stock> Stocks { get; set; }
+
+        public StockList()
+        {
+            Stocks = new List<Stock>();
+        }
     }
 }

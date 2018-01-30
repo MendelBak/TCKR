@@ -7,6 +7,6 @@ namespace tckr.Models
         public string Symbol { get; set; }
         public string Name { get; set; }
         public int Shares { get; set; }
-        public int Value { get; set; }
+        public float Value { get; set; }
     }
 }
