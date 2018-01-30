@@ -13,7 +13,6 @@
 </nav>
 
 <div class="container">
-
   <!-- Login Modal -->
   <!-- tabindex prevents tab from entering page and focuses it on modal -->
   <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" keyboard="true" aria-labelledby="LoginModal" aria-hidden="true">
@@ -28,19 +27,19 @@
         <div class="modal-body">
           <form asp-controller="User" asp-action="LoginSubmit" method="post" class="form-group">
             <label asp-for="Log.Email">Email</label>
-            <input asp-for="Log.Email" placeholder="Email Address" class="form-control" id="Email"> 
-            <span asp-validation-for="Log.Email"></span>
+            <input asp-for="Log.Email" placeholder="Email Address" class="form-control"> 
+            <span id="emailError"></span>
 
 
             <label asp-for="Log.Password">Password</label>
-            <input asp-for="Log.Password" placeholder="Password" class="form-control" id="Password"> 
+            <input asp-for="Log.Password" placeholder="Password" class="form-control"> 
             <span asp-validation-for="Log.Password"></span>
 
-            <span>@ViewBag.loginError</span>
+            <span id="loginError"></span>
 
             <br>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
+           
+            <button type="submit" class="btn-block btn-sm btn-primary id="loginSubmit">Submit</button>
 
           </form>
         </div>
@@ -52,9 +51,10 @@
   <!--End Login Modal -->
 
 
+
   <!--Register Modal -->
     <div class="modal fade" id="RegisterModal" tabindex="-1" role="dialog" aria-labelledby="RegisterModal" aria-hidden="true">
-    <div class="modal-dialog" role="dialog">
+    <div class="modal-dialog modal-sm" role="dialog">
     
       <!-- Modal content-->
       <div class="modal-content">
@@ -66,37 +66,37 @@
           
             <form asp-controller="User" asp-action="NewUser" method="POST" class="form-group">
                 <label asp-for="Reg.FirstName">First Name</label>
-                <input asp-for="Reg.FirstName" placeholder="First Name" class="form-control" id="FirstName"> 
+                <input asp-for="Reg.FirstName" placeholder="First Name" class="form-control"> 
                 <span asp-validation-for="Reg.FirstName"></span>
 
                 <br>
 
                 <label asp-for="Reg.LastName">Last Name</label>
-                <input asp-for="Reg.LastName" placeholder="Last Name" class="form-control" id="LastName"> 
+                <input asp-for="Reg.LastName" placeholder="Last Name" class="form-control"> 
                 <span asp-validation-for="Reg.LastName"></span>
                 
                 <br>
 
                 <label asp-for="Reg.Email">Email</label>
-                <input asp-for="Reg.Email" placeholder="Email Address" class="form-control" id="Email"> 
+                <input asp-for="Reg.Email" placeholder="Email Address" class="form-control"> 
                 <span asp-validation-for="Reg.Email"></span>
 
                 <br>
 
                 <label asp-for="Reg.Password">Password</label>
-                <input asp-for="Reg.Password" placeholder="Password" class="form-control" id="Password"> 
+                <input asp-for="Reg.Password" placeholder="Password" class="form-control"> 
                 <span asp-validation-for="Reg.Password"></span>
 
                 <br>
 
                 <label asp-for="Reg.ConfirmPassword">Confirm Password</label>
-                <input asp-for="Reg.ConfirmPassword" placeholder="Confirm Password" class="form-control" id="ConfirmPassword"> 
+                <input asp-for="Reg.ConfirmPassword" placeholder="Confirm Password" class="form-control"> 
                 <span asp-validation-for="Reg.ConfirmPassword"></span>
 
                 <span> @ViewBag.email </span>
                 <br>
                 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn-block btn-sm btn-primary">Submit</button>
             </form>
         </div>
 
@@ -105,5 +105,7 @@
   </div>
 </div>  
   <!--End Register Modal -->
+
+
 
 

@@ -31,7 +31,7 @@ namespace tckr.Controllers
         // Newuser route is the registration route for a new user.
         [HttpPost]
         [Route("NewUser")]
-        public IActionResult NewUser(RegisterViewModel model)
+        public IActionResult NewUser(AllUserViewModels model)
         {
             // Check if models received any validation errors.
             if (ModelState.IsValid)
@@ -39,17 +39,17 @@ namespace tckr.Controllers
                 try
                 {
                     // Check if email already exists in DB.
-                    var EmailExists = _context.Users.Where(e => e.Email == model.Email).SingleOrDefault();
+                    var EmailExists = _context.Users.Where(e => e.Email == model.Reg.Email).SingleOrDefault();
                     if (EmailExists == null)
                     {
                         // Hash password
                         PasswordHasher<RegisterViewModel> Hasher = new PasswordHasher<RegisterViewModel>();
-                        string HashedPassword = Hasher.HashPassword(model, model.Password);
+                        string HashedPassword = Hasher.HashPassword(model.Reg, model.Reg.Password);
                         User NewUser = new User
                         {
-                            FirstName = model.FirstName,
-                            LastName = model.LastName,
-                            Email = model.Email,
+                            FirstName = model.Reg.FirstName,
+                            LastName = model.Reg.LastName,
+                            Email = model.Reg.Email,
                             Password = HashedPassword,
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now,
@@ -75,6 +75,7 @@ namespace tckr.Controllers
                 {
                     return View("register");
                 }
+            // If block will run if the ModelState is invalid.
             }
             return View("register");
         }
@@ -94,17 +95,17 @@ namespace tckr.Controllers
         // This route handles login requests.
         [HttpPost]
         [Route("LoginSubmit")]
-        public IActionResult LoginSubmit(LoginViewModel model)
+        public IActionResult LoginSubmit(AllUserViewModels model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // If there are no errors upon form submit check db for proper creds.
-                    User LoggedUser = _context.Users.SingleOrDefault(u => u.Email == model.Email);
+                    // If there are no errors upon form submit, check db for proper creds.
+                    User LoggedUser = _context.Users.SingleOrDefault(u => u.Email == model.Log.Email);
                     var Hasher = new PasswordHasher<User>();
-                    // Check hashed password.
-                    if (Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Password) != 0)
+                    // Check    hashed password.
+                    if (Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Log.Password) != 0)
                     {
                         // Set user id and first name in session for use in identification, future db calls, and for greeting the user.
                         HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.Id);
@@ -165,7 +166,7 @@ namespace tckr.Controllers
         {
             HttpContext.Session.Clear();
             // LoginPage Method is in User Controller
-            return RedirectToAction("LoginPage");
+            return RedirectToAction("Index");
         }
 
 

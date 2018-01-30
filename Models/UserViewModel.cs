@@ -46,7 +46,7 @@ namespace tckr.Models
         public string Password { get; set; }
     }
 
-    public class AllUserViewModels : BaseEntity
+    public class AllUserViewModels
     {
         public LoginViewModel Log { get; set; }
         public RegisterViewModel Reg { get; set; }
