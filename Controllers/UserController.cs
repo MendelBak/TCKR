@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using tckr.Models;
@@ -57,12 +56,13 @@ namespace tckr.Controllers
                         _context.Add(NewUser);
                         _context.SaveChanges();
 
-                        // Set user id and first name in session for use in identification, future db calls, and for greeting the user.
-                        HttpContext.Session.SetInt32("LoggedUserId", NewUser.Id);
-                        HttpContext.Session.SetString("LoggedUserName", NewUser.FirstName);
-                        
-                        // Redirect to Account method in Account controller.
-                        return RedirectToAction("Profile", "Profile");
+                        //Now that the user has been added to the DB and a UserId has been created, query for that user and save the UserId.
+                        User User = _context.Users.SingleOrDefault(u => u.Email == model.Email);
+                        // Set user id in session for use in identification, future db calls, and for greeting the user.
+                        HttpContext.Session.SetInt32("LoggedUserId", User.UserId);
+
+                        // Redirect to Profile method.
+                        return RedirectToAction("Profile");
                     }
                     // Redirect w/ error if email already exists in db.
                     else
@@ -88,6 +88,9 @@ namespace tckr.Controllers
         }
 
 
+
+
+
         // This route handles login requests.
         [HttpPost]
         [Route("LoginSubmit")]
@@ -103,10 +106,9 @@ namespace tckr.Controllers
                     // Check hashed password.
                     if (Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Password) != 0)
                     {
-                        // Set user id and first name in session for use in identification, future db calls, and for greeting the user.
-                        HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.Id);
-                        HttpContext.Session.SetString("LoggedUserName", LoggedUser.FirstName);
-                        return RedirectToAction("Account", "Account");
+                        // Set user id in session for use in identification, future db calls, and for greeting the user.
+                        HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.UserId);
+                        return RedirectToAction("Profile");
                     }
                     else
                     {
@@ -126,6 +128,90 @@ namespace tckr.Controllers
             {
                 return View("login");
             }
+        }
+
+        [HttpGet]
+        [Route("Profile")]
+        public IActionResult Profile()
+        {
+            Console.WriteLine("GOT TO PROFILE");
+            // Check to ensure there is a properly logged in user by checking session.
+            if (HttpContext.Session.GetInt32("LoggedUserId") >= 0)
+            {
+                try
+                {
+                    // Get UserId from session
+                    var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+                    // Getting User from DB
+                    User User = _context.Users.SingleOrDefault(u => u.UserId == SessionId);
+                    // Put User in ViewBag for View
+                    ViewBag.User = User;
+                    return View("Profile");
+                }
+                // Catch should only fire if there was an error getting/setting sesion id and username to ViewBag but if session id exists (which means a user is logged in). Send to login page.
+                catch
+                {
+                    return View("Login");
+                }
+            }
+            // If no id is in session that means that the user is not properly logged on. Redirect to logout which will end up at LoginPage.
+            return RedirectToAction("Logout");
+        }
+
+        [HttpGet]
+        [Route("Logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            // LoginPage Method is in User Controller
+            return RedirectToAction("LoginPage");
+        }
+        [HttpPost]
+        [Route("UpdateBio")]
+        public IActionResult UpdateBio(User model)
+        {
+            if(model.Bio != null){
+            var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+            User User = _context.Users.SingleOrDefault(u => u.UserId == SessionId);
+            User.Bio = model.Bio;
+            _context.SaveChanges();
+            }
+            return RedirectToAction("Profile");
+        }
+        [HttpPost]
+        [Route("UpdatePassword")]
+        public IActionResult UpdatePassword(Dictionary<string,string> Data)
+        {
+            if(Data["Password"] != null && Data["PasswordA"] != null && Data["PasswordB"] != null)
+            {
+                var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+                User User = _context.Users.SingleOrDefault(u => u.UserId == SessionId);
+                Console.WriteLine("OLD");
+                Console.WriteLine(User.Password);
+                var Hasher = new PasswordHasher<User>();
+                if (Hasher.VerifyHashedPassword(User, User.Password, Data["Password"]) != 0)
+                    {
+                        if(Data["PasswordA"] != Data["PasswordB"]){
+                            // Don't match error
+                        }
+                        else
+                        {
+                            Console.WriteLine("BOUT TO UPDATE");
+                            PasswordHasher<Dictionary<string,string>> NewHasher = new PasswordHasher<Dictionary<string,string>>();
+                            string HashedPassword = NewHasher.HashPassword(Data, Data["Password"]);
+                            User.Password = HashedPassword;
+                            _context.Update(User);
+                            _context.SaveChanges();
+                            Console.WriteLine("NEW");
+                            Console.WriteLine(HashedPassword);
+                            return RedirectToAction("Profile");
+                        }
+                        // Set user id in session for use in identification, future db calls, and for greeting the user.
+                        return RedirectToAction("Profile");
+                    }
+
+            }
+            return RedirectToAction("Profile");
         }
     }
 }

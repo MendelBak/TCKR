@@ -76,3 +76,5 @@ _[Ss]cripts
 *.ncrunchsolution
 *.dot[Cc]over
 appsettings.json
+Migrations
+apikey.json
