@@ -1,7 +1,4 @@
 namespace tckr.Models
 {
-    public class Portfolio : StockList 
-    {
-        
-    }
+    public class Portfolio : StockList { }
 }

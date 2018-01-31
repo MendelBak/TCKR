@@ -8,12 +8,11 @@ namespace tckr.Models
     {
         [Required]
         public string Symbol { get; set; }
-
-        public string Name { get; set; }
         
         [Required]
         public int Shares { get; set; }
 
-        public int Value { get; set; }
+        [Required]
+        public double PurchasePrice { get; set; }
     }
 }

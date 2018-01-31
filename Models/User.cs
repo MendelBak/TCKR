@@ -1,8 +1,3 @@
-using System;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
 namespace tckr.Models
 {
     public class User : BaseEntity
