@@ -182,6 +182,7 @@ namespace tckr.Controllers
         [Route("Portfolio")]
         public IActionResult Portfolio()
         {
+            // Retreive id from Session for User query
             int? id = HttpContext.Session.GetInt32("LoggedUserId");
             
             if (id == null)
@@ -189,37 +190,49 @@ namespace tckr.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Retreive current User and Portfolio from the database
             User User = _context.Users.SingleOrDefault(u => u.Id == (int)id);
             Portfolio Portfolio = _context.Portfolios
                 .Include(p => p.Stocks)
                 .SingleOrDefault(p => p.User == User);
-            ViewBag.Portfolio = Portfolio;
-            ViewBag.User = User;
-            ViewBag.Total = 0;
-
-            JObject apikey = JObject.Parse(System.IO.File.ReadAllText("apikey.json"));
             
+            // For each Stock in Portfolio, call API based on values in database
+            // Also, populate Stocks list for later use in ViewBag
+            ViewBag.Total = 0;
             foreach (Stock Stock in Portfolio.Stocks)
             {
+                // Create a Dictionary object to store JSON values from API call
                 Dictionary<string, object> Data = new Dictionary<string, object>();
                 
-                WebRequest.GetMarketData("TIME_SERIES_INTRADAY", Stock.Symbol, "1min", JsonResponse =>
+                // Make API call
+                WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
                     {
                         Data = JsonResponse;
                     }
                 ).Wait();
 
-                JObject MetaData = (JObject)Data["Meta Data"];
-                string LastRefreshed = (string)MetaData["3. Last Refreshed"];
-                string Name = (string)MetaData["3. Last Refreshed"];
+                // Define values for each stock to be stored in ViewBag
+                double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
+                
+                Stock.Name = (string)Data["companyName"];
+                Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
+                Stock.CurrentPrice = CurrentPrice;
+                Stock.CurrentValue = CurrentPrice * Stock.Shares;
+                Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
+                Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
+                Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
+                Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
+                Stock.Week52High = Convert.ToDouble(Data["week52High"]);
+                Stock.UpdatedAt = DateTime.Now;
 
-                JObject TimeSeries = (JObject)Data["Time Series (1min)"];
-                JObject DataPoint = (JObject)TimeSeries[LastRefreshed];
-                float Value = (float)DataPoint["4. close"];
+                _context.SaveChanges();
 
-                Stock.Value = Value;
-                ViewBag.Total += Value; 
+                ViewBag.Total += Stock.CurrentValue;
             }
+            
+            // Store values in ViewBag for Portfolio page rendering
+            ViewBag.Portfolio = Portfolio;
+            ViewBag.User = User;
 
             return View("Portfolio");
         }
@@ -236,7 +249,9 @@ namespace tckr.Controllers
             }
 
             User User = _context.Users.SingleOrDefault(u => u.Id == (int)id);
-            Portfolio Portfolio = _context.Portfolios.SingleOrDefault(p => p.User == User);
+            Portfolio Portfolio = _context.Portfolios
+                .Include(p => p.Stocks)
+                .SingleOrDefault(p => p.User == User);
             
             if (ModelState.IsValid)
             {
@@ -244,6 +259,7 @@ namespace tckr.Controllers
                 {
                     Symbol = s.Symbol,
                     Shares = s.Shares,
+                    PurchasePrice = s.PurchasePrice,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                 };
@@ -255,35 +271,44 @@ namespace tckr.Controllers
                 return RedirectToAction("Portfolio");
             }
 
-            ViewBag.User = User;
-            ViewBag.Portfolio = Portfolio;
-            float Total = 0;
-
-            JObject apikey = JObject.Parse(System.IO.File.ReadAllText("apikey.json"));
-
+            // For each Stock in Portfolio, call API based on values in database
+            // Also, populate Stocks list for later use in ViewBag
+            ViewBag.Total = 0;
             foreach (Stock Stock in Portfolio.Stocks)
             {
+                // Create a Dictionary object to store JSON values from API call
                 Dictionary<string, object> Data = new Dictionary<string, object>();
 
-                WebRequest.GetMarketData("TIME_SERIES_INTRADAY", Stock.Symbol, "1min", JsonResponse =>
+                // Make API call
+                WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
                     {
                         Data = JsonResponse;
                     }
                 ).Wait();
 
-                Dictionary<string, string> MetaData = (Dictionary<string, string>)Data["Meta Data"];
-                string LastRefreshed = MetaData["3. Last Refreshed"];
+                // Define values for each stock to be stored in ViewBag
+                double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
 
-                Dictionary<string, object> TimeSeries = (Dictionary<string, object>)Data["Time Series (1min)"];
-                Dictionary<string, object> DataPoint = (Dictionary<string, object>)TimeSeries[LastRefreshed];
-                float Value = (float)DataPoint["4. close"];
+                Stock.Name = (string)Data["companyName"];
+                Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
+                Stock.CurrentPrice = CurrentPrice;
+                Stock.CurrentValue = CurrentPrice * Stock.Shares;
+                Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
+                Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
+                Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
+                Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
+                Stock.Week52High = Convert.ToDouble(Data["week52High"]);
+                Stock.UpdatedAt = DateTime.Now;
 
-                Stock.Value = Value;
-                Total += Value;
+                _context.SaveChanges();
+
+                ViewBag.Total += Stock.CurrentValue;
             }
 
-            ViewBag.Total = Total;
-
+            // Store values in ViewBag for Portfolio page rendering
+            ViewBag.Portfolio = Portfolio;
+            ViewBag.User = User;
+            
             return View("Portfolio");
         }
     }

@@ -10,16 +10,14 @@ namespace tckr
 {
     public class WebRequest
     {
-        private static JObject apikey = JObject.Parse(System.IO.File.ReadAllText("apikey.json"));
-        
-        public static async Task GetMarketData(string TimeSeries, string Symbol, string Interval, Action<Dictionary<string, object>> Callback)
+        public static async Task GetQuote(string Symbol, Action<Dictionary<string, object>> Callback)
         {
             // Create a temporary HttpClient connection.
             using (var Client = new HttpClient())
             {
                 try
                 {
-                    Client.BaseAddress = new Uri($"https://www.alphavantage.co/query?function={TimeSeries}&symbol={Symbol}&interval={Interval}&apikey={apikey["Alpha Vantage API Key"]}");
+                    Client.BaseAddress = new Uri($"https://api.iextrading.com/1.0/stock/{Symbol}/quote");
                     HttpResponseMessage Response = await Client.GetAsync(""); // Make the actual API call.
                     Response.EnsureSuccessStatusCode(); // Throw error if not successful.
                     string StringResponse = await Response.Content.ReadAsStringAsync(); // Read in the response as a string.

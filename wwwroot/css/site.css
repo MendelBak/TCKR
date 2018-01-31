@@ -1,3 +1,10 @@
 th, td {
     padding: 5px 10px;
+    text-align: center;
+}
+tbody tr {
+    border-top: 1px solid #eeeeee;
+}
+table {
+    margin: 50px 0;
 }
