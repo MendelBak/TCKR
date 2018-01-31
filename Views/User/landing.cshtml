@@ -3,7 +3,7 @@
 <nav class="navbar navbar-dark navbar-fixed-top navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">Welcome @ViewBag.FirstName to your Checking Account  | Your ID is: @ViewBag.UserId</a>
+      <a class="navbar-brand" href="">TCKR</a>
     </div>
     <ul class="nav navbar-nav navbar-right">
       <li><a href="#LoginModal" data-toggle="modal"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -35,7 +35,7 @@
             <input asp-for="Log.Password" placeholder="Password" class="form-control"> 
             <span asp-validation-for="Log.Password"></span>
 
-            <span id="loginError"></span>
+            <span>@ViewBag.loginError</span>
 
             <br>
            
@@ -53,7 +53,7 @@
 
 
   <!--Register Modal -->
-    <div class="modal fade" id="RegisterModal" tabindex="-1" role="dialog" aria-labelledby="RegisterModal" aria-hidden="true">
+    <div class="modal fade" id="RegisterModal" tabindex="-1" role="dialog" keyboard="true" aria-labelledby="RegisterModal" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="dialog">
     
       <!-- Modal content-->

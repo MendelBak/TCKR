@@ -6,6 +6,8 @@ namespace tckr.Models
 {
     public class RegisterViewModel : BaseEntity
     {
+        public int UserId { get; set; }
+        
         [Required]
         [MinLength(2, ErrorMessage = "First Name must be at least 2 characters")]
         public string FirstName { get; set; }

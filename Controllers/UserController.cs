@@ -39,11 +39,13 @@ namespace tckr.Controllers
                 {
                     // Check if email already exists in DB.
                     var EmailExists = _context.Users.Where(e => e.Email == model.Reg.Email).SingleOrDefault();
+                    // If email is unique, perform registration.
                     if (EmailExists == null)
                     {
-                        // Hash password
+                        // Hash and store password in DB.
                         PasswordHasher<RegisterViewModel> Hasher = new PasswordHasher<RegisterViewModel>();
                         string HashedPassword = Hasher.HashPassword(model.Reg, model.Reg.Password);
+
                         User NewUser = new User
                         {
                             FirstName = model.Reg.FirstName,
@@ -56,10 +58,9 @@ namespace tckr.Controllers
                         _context.Add(NewUser);
                         _context.SaveChanges();
 
-                        //Now that the user has been added to the DB and a UserId has been created, query for that user and save the UserId.
-                        User User = _context.Users.SingleOrDefault(u => u.Email == model.Email);
                         // Set user id in session for use in identification, future db calls, and for greeting the user.
-                        HttpContext.Session.SetInt32("LoggedUserId", User.UserId);
+                        HttpContext.Session.SetInt32("LoggedUserId", NewUser.Id);
+
 
                         // Redirect to Profile method.
                         return RedirectToAction("Profile");
@@ -67,17 +68,21 @@ namespace tckr.Controllers
                     // Redirect w/ error if email already exists in db.
                     else
                     {
-                        ViewBag.email = "That email is already in use. Please try again using another.";
+                        ViewBag.email = "That email is already in use. Please try again using a different one.";
+                        return View("landing");
                     }
                 }
-                // Catch should only run if there was an error with the db connection/query
+                // Catch should only run if there was an error with the password hashing or storing on the new user in the DB.
                 catch
                 {
-                    return View("register");
+                    return View("landing");
                 }
-            // If block will run if the ModelState is invalid.
             }
-            return View("register");
+            // Else statement will run if the ModelState is invalid.
+            else
+            {
+                return View("landing");
+            }
         }
 
 
@@ -90,8 +95,7 @@ namespace tckr.Controllers
 
 
 
-
-
+        
         // This route handles login requests.
         [HttpPost]
         [Route("LoginSubmit")]
@@ -99,43 +103,105 @@ namespace tckr.Controllers
         {
             if (ModelState.IsValid)
             {
+                // If there are no errors upon form submit, check db for proper creds.
+                // The reason for the multiple try/catch statements is to return the proper validation error message to the user. 
+                // There are better ways to do it, but this is a simple, although crude, method that works for now.
+                User LoggedUser;
+                
                 try
                 {
-                    // If there are no errors upon form submit, check db for proper creds.
-                    User LoggedUser = _context.Users.SingleOrDefault(u => u.Email == model.Log.Email);
+                    LoggedUser = _context.Users.SingleOrDefault(u => u.Email == model.Log.Email);
+                }
+                // Catch will run if matching email is not found in DB.
+                catch
+                {
+                    ViewBag.loginError = "Your email was incorrect.";
+                    return View("landing");
+                    
+                }
+                // If email is correct, verify that password is correct.
+                try
+                {
                     var Hasher = new PasswordHasher<User>();
-                    // Check    hashed password.
-                    if (Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Log.Password) != 0)
+                    // Check hashed password. 0 = false password match.
+                    if(Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Log.Password) != 0)
                     {
                         // Set user id in session for use in identification, future db calls, and for greeting the user.
-                        HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.UserId);
+                        HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.Id);
                         return RedirectToAction("Profile");
                     }
+                    // If password does not match
                     else
                     {
-                        ViewBag.loginError = "Sorry, your password was incorrect.";
+                        ViewBag.loginError = "Your password was incorrect.";
                         return View("landing");
                     }
                 }
-                // If no proper creds redirect to login page and return error.
+                // Catch should only run if there was some unusual error, like a DB connection error. Logout will clear session. That might have an effect.
                 catch
                 {
-                    ViewBag.loginError = "Sorry, your email or password were incorrect.";
-                    return View("landing");
+                    ViewBag.loginError = "Sorry, there was a problem logging you in. Please try again.";
+                    return RedirectToAction("logout");
                 }
             }
-            // If form submit was illegal redirect to login and display model validation errors.
+            // If ModelState is not valid redirect to login and display model validation errors.
             else
             {
+                ViewBag.loginError = "Your email or password was incorrect.";
                 return View("landing");
             }
         }
+
+
+        // This is an older version. 
+        // // This route handles login requests.
+        // [HttpPost]
+        // [Route("LoginSubmit")]
+        // public IActionResult LoginSubmit(AllUserViewModels model)
+        // {
+        //         // If there are no errors upon form submit, check db for proper creds.
+        //     if (ModelState.IsValid)
+        //     {
+        //         // There are better ways to do this validation scheme, especially where it will return more specific reasons for failing login(password vs email), but this is a simple method that works for now.
+        //         try
+        //         {
+        //             User LoggedUser = _context.Users.SingleOrDefault(u => u.Email == model.Log.Email);
+
+        //             var Hasher = new PasswordHasher<User>();
+        //             // Check hashed password. 0 = false password match.
+        //             if(Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Log.Password) != 0)
+        //             {
+        //                 // Set user id in session for use in identification, future db calls, and for greeting the user.
+        //                 HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.Id);
+        //                 return RedirectToAction("Profile");
+        //             }
+        //             // If password does not match
+        //             else
+        //             {
+        //                 ViewBag.loginError = "Sorry, your password was incorrect.";
+        //                 return View("landing");
+        //             }
+
+        //         }
+        //         // Catch should only run if there was some unusual error, like a DB connection error. Logout will clear session. That might have an effect.
+        //         catch
+        //         {
+        //             return RedirectToAction("logout");
+        //         }
+        //     }
+        //     // If ModelState is not valid redirect to login and display model validation errors.
+        //     else
+        //     {
+        //         ViewBag.loginError = "Sorry, your email or password was incorrect.";
+        //         return View("landing");
+        //     }
+        // }
 
         [HttpGet]
         [Route("Profile")]
         public IActionResult Profile()
         {
-            Console.WriteLine("GOT TO PROFILE");
+            Console.WriteLine("GO TO PROFILE");
             // Check to ensure there is a properly logged in user by checking session.
             if (HttpContext.Session.GetInt32("LoggedUserId") >= 0)
             {
@@ -143,19 +209,21 @@ namespace tckr.Controllers
                 {
                     // Get UserId from session
                     var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
-                    // Getting User from DB
-                    User User = _context.Users.SingleOrDefault(u => u.UserId == SessionId);
-                    // Put User in ViewBag for View
+
+                    // Get User object from DB
+                    User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
+
+                    // Put User in ViewBag to display in view.
                     ViewBag.User = User;
                     return View("Profile");
                 }
-                // Catch should only fire if there was an error getting/setting sesion id and username to ViewBag but if session id exists (which means a user is logged in). Send to login page.
+                // Catch should only fire if there was an error getting/setting sesion id to ViewBag or if error getting User object from DB.
                 catch
                 {
-                    return View("Login");
+                    return View("landing");
                 }
             }
-            // If no id is in session that means that the user is not properly logged on. Redirect to logout which will end up at LoginPage.
+            // If no id is in session that means that the user is not properly logged on. Redirect to logout which will end up at landing page.
             return RedirectToAction("Logout");
         }
 
@@ -167,18 +235,22 @@ namespace tckr.Controllers
             // LoginPage Method is in User Controller
             return RedirectToAction("Index");
         }
+
+
         [HttpPost]
         [Route("UpdateBio")]
         public IActionResult UpdateBio(User model)
         {
             if(model.Bio != null){
             var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
-            User User = _context.Users.SingleOrDefault(u => u.UserId == SessionId);
+            User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
             User.Bio = model.Bio;
             _context.SaveChanges();
             }
             return RedirectToAction("Profile");
         }
+
+        
         [HttpPost]
         [Route("UpdatePassword")]
         public IActionResult UpdatePassword(Dictionary<string,string> Data)
@@ -186,7 +258,7 @@ namespace tckr.Controllers
             if(Data["Password"] != null && Data["PasswordA"] != null && Data["PasswordB"] != null)
             {
                 var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
-                User User = _context.Users.SingleOrDefault(u => u.UserId == SessionId);
+                User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
                 Console.WriteLine("OLD");
                 Console.WriteLine(User.Password);
                 var Hasher = new PasswordHasher<User>();
