@@ -6,6 +6,8 @@ namespace tckr.Models
 {
     public class RegisterViewModel : BaseEntity
     {
+        public int UserId { get; set; }
+        
         [Required]
         [MinLength(2, ErrorMessage = "First Name must be at least 2 characters")]
         public string FirstName { get; set; }
@@ -44,5 +46,11 @@ namespace tckr.Models
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+    }
+
+    public class AllUserViewModels
+    {
+        public LoginViewModel Log { get; set; }
+        public RegisterViewModel Reg { get; set; }
     }
 }
