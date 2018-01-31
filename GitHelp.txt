@@ -4,6 +4,7 @@
 git add .
 git commit -m "" 
 git push
+   
  
 # When finished branch and wish to merge with master:
 git checkout master
