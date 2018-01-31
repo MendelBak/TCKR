@@ -247,6 +247,7 @@ namespace tckr.Controllers
                 User.Bio = Data["Bio"];
                 _context.Update(User);
                 _context.SaveChanges();
+                
             }
             return RedirectToAction("Profile");
         }
@@ -270,7 +271,7 @@ namespace tckr.Controllers
                         }
                         else
                         {
-                            Console.WriteLine("BOUT TO UPDATE");
+                            Console.WriteLine("ABOUT TO UPDATE");
                             PasswordHasher<Dictionary<string,string>> NewHasher = new PasswordHasher<Dictionary<string,string>>();
                             string HashedPassword = NewHasher.HashPassword(Data, Data["Password"]);
                             User.Password = HashedPassword;
