@@ -24,6 +24,12 @@ namespace tckr.Controllers
         [Route("")]
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetInt32("LoggedUserId") >= 0)
+            {
+                var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+                User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
+                ViewBag.User = User;
+            }
             return View("landing");
         }
 

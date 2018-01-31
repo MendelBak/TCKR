@@ -28,42 +28,46 @@
 </script>
 @model tckr.Models.User
 @Html.Partial("navbar")
-<div>
-    <h1>Welcome to your profile @ViewBag.User.FirstName</h1>
-</div>
-<div id="StockInfo">
-    <div id="TopPortfolio">
-        <h4>Your Top Stocks</h4>
-        <!-- Later we'll have a list of stocks and perhaps graphs -->
-    </div>
-    <div id="TopWatch">
-        <h4>Your Top Stocks To Watch</h4>
-        <!-- Later we'll have a list of stocks and perhaps graphs -->
-    </div>
-</div>
-<div id="UserInfo">
-    <div="Bio">
-        @if(@ViewBag.User.Bio != null){
-            <h4>Your Bio:</h4>
-        }
-        else{
-            <h4>Create your bio:</h4>
-        }
-            <form id="BioForm" action="UpdateBio" method="post">
-                <textarea id="Bio" class="form-control" rows="5" name="Bio">@ViewBag.User.Bio</textarea>
-                <input id="BioButton" type="submit" value="Submit">
-            </form>
-    </div>
-    <div id="PrivateInfo">
-        <h3>Personal Info:</h3>
-        <p>Email: @ViewBag.User.Email</p>
-        <a id="Password">Like to change your password?</a>
-        <form id="PasswordForm" action="UpdatePassword" method="post">
-            Current Password: <input type="text" id="password" name="password"><br>
-            New Password: <input type="text" id="passwordA" name="passwordA"><br>
-            Confirm New Password: <input type="text" id="passwordB" name="passwordB"><br>
-            <input type="submit" value="Submit">
-        </form>
-        <!-- We can use jquery to create a form text to edit the user's password. The info will be sent to the Update method in the UserController -->
+<div id="profilewrapper">
+    <div id="profilemain">
+        <div>
+            <h1>Welcome to your profile @ViewBag.User.FirstName</h1>
+        </div>
+        <div id="StockInfo">
+            <div id="TopPortfolio">
+                <h4>Your Top Stocks</h4>
+                <!-- Later we'll have a list of stocks and perhaps graphs -->
+            </div>
+            <div id="TopWatch">
+                <h4>Your Top Stocks To Watch</h4>
+                <!-- Later we'll have a list of stocks and perhaps graphs -->
+            </div>
+        </div>
+        <div id="UserInfo">
+            <div="Bio">
+                @if(@ViewBag.User.Bio != null){
+                    <h4>Your Bio:</h4>
+                }
+                else{
+                    <h4>Create your bio:</h4>
+                }
+                    <form id="BioForm" action="UpdateBio" method="post">
+                        <textarea id="Bio" class="form-control" rows="5" name="Bio">@ViewBag.User.Bio</textarea>
+                        <input id="BioButton" type="submit" value="Submit">
+                    </form>
+            </div>
+            <div id="PrivateInfo">
+                <h3>Personal Info:</h3>
+                <p>Email: @ViewBag.User.Email</p>
+                <a id="Password">Like to change your password?</a>
+                <form id="PasswordForm" action="UpdatePassword" method="post">
+                    Current Password: <input type="text" id="password" name="password"><br>
+                    New Password: <input type="text" id="passwordA" name="passwordA"><br>
+                    Confirm New Password: <input type="text" id="passwordB" name="passwordB"><br>
+                    <input type="submit" value="Submit">
+                </form>
+                <!-- We can use jquery to create a form text to edit the user's password. The info will be sent to the Update method in the UserController -->
+            </div>
+        </div>
     </div>
 </div>
