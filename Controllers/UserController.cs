@@ -168,14 +168,19 @@ namespace tckr.Controllers
         }
         [HttpPost]
         [Route("UpdateBio")]
-        public IActionResult UpdateBio(User model)
+        public IActionResult UpdateBio(Dictionary<string,string> Data)
         {
-            if(model.Bio != null){
-            var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
-            User User = _context.Users.SingleOrDefault(u => u.UserId == SessionId);
-            User.Bio = model.Bio;
-            _context.SaveChanges();
-            }
+            Console.WriteLine("STUFF IN UPDATEBIO");
+            Console.WriteLine(Data);
+            Console.WriteLine("STUFF IN UPDATEBIO");
+            Console.WriteLine(Data["Bio"]);
+            if(Data != null){
+                var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+                User User = _context.Users.SingleOrDefault(u => u.UserId == SessionId);
+                User.Bio = Data["Bio"];
+                _context.Update(User);
+                _context.SaveChanges();
+                }
             return RedirectToAction("Profile");
         }
         [HttpPost]

@@ -5,25 +5,25 @@
 <script>
     $(document).ready(function(){
         $('#PasswordForm').hide();
-        $('#Password').click(function(){
-            $('#PasswordForm').show();
-        });
-        $('#PasswordForm').submit(function() {
+        $("#BioButton").hide();
+        $("#Bio").click(function(){
+            $("#BioButton").show();
+        })
+        $('#BioForm').submit(function() {
+            console.log(click)
             var data = {
-                Password: $("#password").val(),
-                PasswordA: $("#passwordA").val(),
-                PasswordB: $("#passwordB").val()
+                Bio: $("#Bio").val()
             }
+            console.log(data);
+            console.log(data["Bio"]);
             $.ajax({
                 data: data,
                 type: 'POST',
-                url: 'UpdatePassword',
+                url: 'UpdateBio',
                 success: function(response) {
-        $('#PasswordForm').hide();
-        }
-    });
-    return false; // cancel original event to prevent form submitting
-});
+                }
+            })
+        })
     })
 </script>
 @model tckr.Models.User
@@ -43,20 +43,16 @@
 </div>
 <div id="UserInfo">
     <div="Bio">
-        <h3>Your Bio:</h3>
-        @if(@ViewBag.Bio != null){
-            <p>@ViewBag.Bio</p>
+        @if(@ViewBag.User.Bio != null){
+            <h4>Your Bio:</h4>
         }
         else{
             <h4>Create your bio:</h4>
-            <form asp-controller="User" asp-action="UpdateBio" method="post">
-                <span asp-validation-for="Bio"></span>
-                <label asp-for="Bio">Bio: </label>
-                <input asp-for="Bio"><br>
-                <input type="submit" value="Submit">
-            </form>
-            // Later I'll use Jquery to create a text area that once clicked you can edit your bio directly on the page
         }
+            <form id="BioForm" action="UpdateBio" method="post">
+                <textarea id="Bio" class="form-control" rows="5" name="Bio">@ViewBag.User.Bio</textarea>
+                <input id="BioButton" type="submit" value="Submit">
+            </form>
     </div>
     <div id="PrivateInfo">
         <h3>Personal Info:</h3>
