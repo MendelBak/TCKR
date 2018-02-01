@@ -154,7 +154,7 @@ namespace tckr.Controllers
                 catch
                 {
                     ViewBag.loginError = "Sorry, there was a problem logging you in. Please try again.";
-                    return RedirectToAction("logout");
+                    return RedirectToAction("Logout");
                 }
             }
             // If ModelState is not valid redirect to login and display model validation errors.
@@ -241,7 +241,7 @@ namespace tckr.Controllers
                         ViewBag.Portfolio = Portfolio;
                     }
                 
-                    return View("Profile");
+                    return View("profile");
                 }
                 // Catch should only fire if there was an error getting/setting sesion id to ViewBag or if error getting User object from DB.
                 catch
