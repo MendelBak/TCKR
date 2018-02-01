@@ -28,14 +28,12 @@ namespace tckr.Controllers
         [Route("")]
         public IActionResult Index()
         {
-            // Dictionary<string, object> Data = new Dictionary<string, object>();
-
-            // WebRequest.GetList(JsonResponse =>
-            // {
-            // Data = JsonResponse;
-            //     }
-            // ).Wait();
-            // System.Console.WriteLine(Data);
+            if (HttpContext.Session.GetInt32("LoggedUserId") >= 0)
+            {
+                var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+                User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
+                ViewBag.User = User;
+            }
             return View("landing");
         }
 
@@ -197,6 +195,52 @@ namespace tckr.Controllers
 
                     // Put User in ViewBag to display in view.
                     ViewBag.User = User;
+
+                    // Get Stock data for Portfolio and Watch List
+                    Portfolio Portfolio = _context.Portfolios.SingleOrDefault(p => p.User == User);
+            
+                    // For each Stock in Portfolio, call API based on values in database
+                    // Also, populate Stocks list for later use in ViewBag
+                    if(Portfolio != null)
+                    {
+                        ViewBag.Total = 0;
+                        foreach (Stock Stock in Portfolio.Stocks)
+                        {
+                            // Create a Dictionary object to store JSON values from API call
+                            Dictionary<string, object> Data = new Dictionary<string, object>();
+                            
+                            // Make API call
+                            WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
+                                {
+                                    Data = JsonResponse;
+                                }
+                            ).Wait();
+                            Console.WriteLine("JSON DATA BEGINS");
+                            Console.WriteLine(Data);
+                            Console.WriteLine("JSON DATA ENDS");
+
+                            // Define values for each stock to be stored in ViewBag
+                            double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
+                            
+                            Stock.Name = (string)Data["companyName"];
+                            Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
+                            Stock.CurrentPrice = CurrentPrice;
+                            Stock.CurrentValue = CurrentPrice * Stock.Shares;
+                            Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
+                            Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
+                            Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
+                            Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
+                            Stock.Week52High = Convert.ToDouble(Data["week52High"]);
+                            Stock.UpdatedAt = DateTime.Now;
+
+                            _context.SaveChanges();
+
+                            ViewBag.Total += Stock.CurrentValue;
+                        }
+                        // Store values in ViewBag for Portfolio page rendering
+                        ViewBag.Portfolio = Portfolio;
+                    }
+                
                     return View("Profile");
                 }
                 // Catch should only fire if there was an error getting/setting sesion id to ViewBag or if error getting User object from DB.

@@ -1,16 +1,6 @@
 @model tckr.Models.AllUserViewModels
-
-<nav class="navbar navbar-dark navbar-fixed-top navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="">TCKR</a>
-    </div>
-    <ul class="nav navbar-nav navbar-right">
-      <li><a href="#LoginModal" data-toggle="modal"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      <li><a href="#RegisterModal" data-toggle="modal"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-    </ul>
-  </div>
-</nav>
+@Html.Partial("header")
+@Html.Partial("navbar")
 
 
 <!-- Login Modal -->

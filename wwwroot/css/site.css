@@ -5,6 +5,51 @@ body.modal-open .navbar{
     -ms-filter: blur(5px);
     filter: blur(4px);
 }
+#test{
+    background-image: url("/img/Marble.jpg");
+    height: 1000px;
+}
+
+#profilewrapper {
+    padding-top: 22px;
+    padding-bottom: 30px;
+    margin-top: 53px;
+    border-radius: 10px;
+    box-shadow: 3px 3px 13px #3e2828;
+    background: linear-gradient(to top,#8f5e5ede, #b78d8d9c, #dcc2c287);
+}
+
+#Bio{
+    width: 500px;
+    margin-left: 60px;
+    background-color: #e6d1d1;
+}
+
+#navbar{
+    border: none;
+    box-shadow: 3px 3px 13px #3e2828;
+    margin-top: 50px;
+    height: 80px;
+    background-color: #52324b99;
+}
+
+#navbar li a{
+    font-size: 20px;
+    color: #ffffff;
+    text-shadow: 3px 3px 13px #3e2828;
+
+}
+
+#navbar a{
+    font-size: 50px;
+    color: #ffffff;
+    text-shadow: 3px 3px 13px #3e2828;
+
+}
+
+#profilemain{
+    padding-left: 54px;
+}
 th, td {
     padding: 5px 10px;
     text-align: center;
