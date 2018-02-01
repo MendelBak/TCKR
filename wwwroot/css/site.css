@@ -9,6 +9,10 @@ body.modal-open .navbar{
     background-image: url("/img/Marble.jpg");
     height: 1000px;
 }
+#headerLogo{
+    width: 250px;
+    border-radius: 150px;
+}
 
 #profilewrapper {
     padding-top: 22px;
@@ -44,7 +48,6 @@ body.modal-open .navbar{
     font-size: 50px;
     color: #ffffff;
     text-shadow: 3px 3px 13px #3e2828;
-
 }
 
 #profilemain{

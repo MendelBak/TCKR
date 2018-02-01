@@ -37,3 +37,19 @@
     }
     </tbody>
 </table>
+
+<form asp-controller="Main" asp-action="WatchlistAdd" method="POST">
+        <label for="Name">Stock Name</label>
+        <input asp-for="Name" class="form-control">
+        <span asp-validation-for="Name"></span>
+
+        <br>
+
+        <label for="Symbol">Stock Symbol</label>
+        <input asp-for="Symbol" class="form-control">
+        <span asp-validation-for="Symbol"></span>
+        
+        <br>
+
+        <input type="submit" class="btn btn-primary">
+</form>
