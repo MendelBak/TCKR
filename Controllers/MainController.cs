@@ -23,8 +23,6 @@ namespace tckr.Controllers
         {
             _context = context;
         }
-        
-
 
 
         [HttpGet]
@@ -33,10 +31,9 @@ namespace tckr.Controllers
         {
             // Retreive id from Session for User query
             int? id = HttpContext.Session.GetInt32("LoggedUserId");
-            
             if (id == null)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "User");
             }
 
             // Retreive current User and Portfolio from the database

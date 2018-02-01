@@ -49,7 +49,7 @@
         </tbody>
     </table>
 
-    <form asp-controller="User" asp-action="PortfolioAdd">
+    <form asp-controller="User" asp-action="PortfolioAdd" method="POST">
         <label for="Symbol">Stock Symbol</label>
         <input asp-for="Symbol" class="form-control">
         <span asp-validation-for="Symbol"></span>
