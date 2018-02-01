@@ -83,7 +83,7 @@ namespace tckr.Controllers
             // Store values in ViewBag for Portfolio page rendering
             ViewBag.Portfolio = Portfolio;
             ViewBag.User = User;
-            return View("Watchlist");
+            return View("watchlist");
         }
 
 
@@ -144,7 +144,7 @@ namespace tckr.Controllers
             // Store values in ViewBag for Portfolio page rendering
             ViewBag.Portfolio = Portfolio;
             ViewBag.User = User;
-            return View("Portfolio");
+            return View("portfolio");
         }
 
         [HttpPost]
@@ -242,7 +242,7 @@ namespace tckr.Controllers
             ViewBag.Portfolio = Portfolio;
             ViewBag.User = User;
             
-            return View("Portfolio");
+            return View("portfolio");
         }
     }
 }
