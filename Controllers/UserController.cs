@@ -28,6 +28,14 @@ namespace tckr.Controllers
         [Route("")]
         public IActionResult Index()
         {
+            // Dictionary<string, object> Data = new Dictionary<string, object>();
+
+            // WebRequest.GetList(JsonResponse =>
+            // {
+            // Data = JsonResponse;
+            //     }
+            // ).Wait();
+            // System.Console.WriteLine(Data);
             return View("landing");
         }
 
@@ -102,13 +110,6 @@ namespace tckr.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("LoginPage")]
-        public IActionResult LoginPage(LoginViewModel model)
-        {
-            return View("login");
-        }
-
         // This route handles login requests.
         [HttpPost]
         [Route("LoginSubmit")]
@@ -118,7 +119,7 @@ namespace tckr.Controllers
             {
                 // If there are no errors upon form submit, check db for proper creds.
                 // The reason for the multiple try/catch statements is to return the proper validation error message to the user. 
-                // There are better ways to do it, but this is a simple, although crude, method that works for now.
+                // There are better ways to do it (AJAX in the modal), but this is a simple, although crude, method that works for now.
                 User LoggedUser;
                 
                 try
@@ -142,7 +143,7 @@ namespace tckr.Controllers
                         // Set user id in session for use in identification, future db calls, and for greeting the user.
                         HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.Id);
                         HttpContext.Session.SetString("LoggedUserName", LoggedUser.FirstName);
-                        return RedirectToAction("Portfolio");
+                        return RedirectToAction("Portfolio", "Main");
                     }
                     // If password does not match
                     else
@@ -165,6 +166,18 @@ namespace tckr.Controllers
                 return View("landing");
             }
         }
+
+
+        [HttpGet]
+        [Route("Logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            // LoginPage Method is in User Controller
+            return RedirectToAction("Index");
+        }
+
+
 
         [HttpGet]
         [Route("Profile")]
@@ -192,152 +205,10 @@ namespace tckr.Controllers
                     return View("landing");
                 }
             }
-            // If no id is in session that means that the user is not properly logged on. Redirect to logout which will end up at landing page.
+            // If no id is in session that means that the user is not properly logged on. Redirect to logout (to clear session, just in case) which will end up at landing page.
             return RedirectToAction("Logout");
         }
 
-        [HttpGet]
-        [Route("Logout")]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            // LoginPage Method is in User Controller
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        [Route("Portfolio")]
-        public IActionResult Portfolio()
-        {
-            // Retreive id from Session for User query
-            int? id = HttpContext.Session.GetInt32("LoggedUserId");
-            
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
-
-            // Retreive current User and Portfolio from the database
-            User User = _context.Users.SingleOrDefault(u => u.Id == (int)id);
-            Portfolio Portfolio = _context.Portfolios
-                .Include(p => p.Stocks)
-                .SingleOrDefault(p => p.User == User);
-            
-            // For each Stock in Portfolio, call API based on values in database
-            // Also, populate Stocks list for later use in ViewBag
-            ViewBag.Total = 0;
-            foreach (Stock Stock in Portfolio.Stocks)
-            {
-                // Create a Dictionary object to store JSON values from API call
-                Dictionary<string, object> Data = new Dictionary<string, object>();
-                
-                // Make API call
-                WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
-                    {
-                        Data = JsonResponse;
-                    }
-                ).Wait();
-
-                // Define values for each stock to be stored in ViewBag
-                double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
-                
-                Stock.Name = (string)Data["companyName"];
-                Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
-                Stock.CurrentPrice = CurrentPrice;
-                Stock.CurrentValue = CurrentPrice * Stock.Shares;
-                Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
-                Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
-                Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
-                Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
-                Stock.Week52High = Convert.ToDouble(Data["week52High"]);
-                Stock.UpdatedAt = DateTime.Now;
-
-                _context.SaveChanges();
-
-                ViewBag.Total += Stock.CurrentValue;
-            }
-            
-            // Store values in ViewBag for Portfolio page rendering
-            ViewBag.Portfolio = Portfolio;
-            ViewBag.User = User;
-
-            return View("Portfolio");
-        }
-
-        [HttpPost]
-        [Route("PortfolioAdd")]
-        public IActionResult PortfolioAdd(StockViewModel s)
-        {
-            int? id = HttpContext.Session.GetInt32("LoggedUserId");
-
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
-
-            User User = _context.Users.SingleOrDefault(u => u.Id == (int)id);
-            Portfolio Portfolio = _context.Portfolios
-                .Include(p => p.Stocks)
-                .SingleOrDefault(p => p.User == User);
-            
-            if (ModelState.IsValid)
-            {
-                Stock NewStock = new Stock
-                {
-                    Symbol = s.Symbol,
-                    Shares = s.Shares,
-                    PurchasePrice = s.PurchasePrice,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                };
-
-                Portfolio.Stocks.Add(NewStock);
-                _context.Add(NewStock);
-                _context.SaveChanges();
-                
-                return RedirectToAction("Portfolio");
-            }
-
-            // For each Stock in Portfolio, call API based on values in database
-            // Also, populate Stocks list for later use in ViewBag
-            ViewBag.Total = 0;
-            foreach (Stock Stock in Portfolio.Stocks)
-            {
-                // Create a Dictionary object to store JSON values from API call
-                Dictionary<string, object> Data = new Dictionary<string, object>();
-
-                // Make API call
-                WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
-                    {
-                        Data = JsonResponse;
-                    }
-                ).Wait();
-
-                // Define values for each stock to be stored in ViewBag
-                double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
-
-                Stock.Name = (string)Data["companyName"];
-                Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
-                Stock.CurrentPrice = CurrentPrice;
-                Stock.CurrentValue = CurrentPrice * Stock.Shares;
-                Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
-                Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
-                Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
-                Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
-                Stock.Week52High = Convert.ToDouble(Data["week52High"]);
-                Stock.UpdatedAt = DateTime.Now;
-
-                _context.SaveChanges();
-
-                ViewBag.Total += Stock.CurrentValue;
-            }
-
-            // Store values in ViewBag for Portfolio page rendering
-            ViewBag.Portfolio = Portfolio;
-            ViewBag.User = User;
-            
-            return View("Portfolio");
-        }
 
         [HttpPost]
         [Route("UpdateBio")]
@@ -349,7 +220,6 @@ namespace tckr.Controllers
                 User.Bio = Data["Bio"];
                 _context.Update(User);
                 _context.SaveChanges();
-                
             }
             return RedirectToAction("Profile");
         }

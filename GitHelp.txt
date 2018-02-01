@@ -19,6 +19,10 @@ runserver and check to ensure app runs w/o errors)
             git push
 git checkout master 
 git merge <branch_name>
+git status
+    if untracked/unstaged files
+        git add .
+        git commit -m ""
 git push
 
 # Don't forget to leave the branch you've been working on as well as the master branch and start a new branch!
@@ -28,6 +32,3 @@ git checkout (leave master to work on new branch)
 
 #When changes to .gitignore have been made run below command to remove files already uploaded to git.
 git rm -r --cached .
-
-
-

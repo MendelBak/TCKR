@@ -12,12 +12,11 @@
   </div>
 </nav>
 
-<div class="container">
-  <!-- Login Modal -->
-  <!-- tabindex prevents tab from entering page and focuses it on modal -->
-  <div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" keyboard="true" aria-labelledby="LoginModal" aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="dialog">
-    
+
+<!-- Login Modal -->
+<!-- tabindex prevents tab from entering page and focuses it on modal -->
+<div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" keyboard="true" aria-labelledby="LoginModal" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="dialog">
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -25,6 +24,7 @@
           <h4>Login</h4>
         </div>
         <div class="modal-body">
+          
           <form asp-controller="User" asp-action="LoginSubmit" method="post" class="form-group">
             <label asp-for="Log.Email">Email</label>
             <input asp-for="Log.Email" placeholder="Email Address" class="form-control"> 
@@ -39,15 +39,15 @@
 
             <br>
            
-            <button type="submit" class="btn-block btn-sm btn-primary id="loginSubmit">Submit</button>
+            <button type="submit" class="btn-block btn-sm btn-primary" id="loginSubmit">Submit</button>
 
           </form>
         </div>
 
       </div>
-    </div>
   </div>
 </div>
+  
   <!--End Login Modal -->
 
 
@@ -106,3 +106,9 @@
 </div>  
   <!--End Register Modal -->
 
+<div>
+  <h1>HEWKRAHSDLKFHSALDK</h1>
+  <h1>HEWKRAHSDLKFHSALDK</h1>
+  <h1>HEWKRAHSDLKFHSALDK</h1>
+  <h1>HEWKRAHSDLKFHSALDK</h1>
+</div>

@@ -1,5 +1,6 @@
-@model tckr.Models.StockViewModel
-<h3>@ViewBag.User.FirstName's Portfolio</h3>
+@Html.Partial("navbar")
+
+<h3>@ViewBag.User.FirstName 's Watchlist</h3>
 <h1>Total: @ViewBag.Total.ToString("C2")</h1>
 <table>
     <thead>
@@ -36,19 +37,3 @@
     }
     </tbody>
 </table>
-
-<form asp-controller="User" asp-action="PortfolioAdd">
-    <label for="Symbol">Stock Symbol</label>
-    <input asp-for="Symbol" class="form-control">
-    <span asp-validation-for="Symbol"></span>
-    <br>
-    <label for="Shares">Number of Shares</label>
-    <input asp-for="Shares" class="form-control">
-    <span asp-validation-for="Shares"></span>
-    <br>
-    <label for="PurchasePrice">Purchase Price</label>
-    <input asp-for="PurchasePrice" class="form-control">
-    <span asp-validation-for="PurchasePrice"></span>
-    <br>
-    <input type="submit" class="btn btn-primary">
-</form>
