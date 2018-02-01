@@ -15,7 +15,7 @@ tbody tr {
 table {
     margin: 50px 0;
 }
-.chart-container {
+#chart {
     position: relative;
     height: 400px;
     width: 800px;
