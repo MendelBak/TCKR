@@ -1,4 +1,4 @@
-@model tckr.Models.StockViewModel
+@model tckr.Models.AllStockViewModels
 <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
         asp-fallback-src="~/lib/jquery/dist/jquery.js"
         asp-fallback-test="window.jQuery">
@@ -11,8 +11,9 @@
 </script>
 @Html.Partial("navbar")
 <div id="portfoliowrapper">
-    <h3>@ViewBag.User.FirstName 's Portfolio</h3>
-    <h1>Total: @ViewBag.Total.ToString("C2")</h1>
+    <h3>@ViewBag.User.FirstName&#8217;s Portfolio</h3>
+    <h1>Total Portfolio Value: @ViewBag.Total.ToString("C2")</h1>
+    <h3>Total Portfolio Value Gain/Loss: @ViewBag.TotalGainLossValue.ToString("C2")</h3>
     <table>
         <thead>
             <th>Symbol</th>
@@ -49,19 +50,21 @@
         </tbody>
     </table>
 
-    <form asp-controller="User" asp-action="PortfolioAdd" method="POST">
-        <label for="Symbol">Stock Symbol</label>
-        <input asp-for="Symbol" class="form-control">
-        <span asp-validation-for="Symbol"></span>
+<h3>Add A New Stock To Your Portfolio</h3>
+    <form asp-controller="Main" asp-action="PortfolioAdd" method="POST">
+        <label for="PortfolioStockViewModel.Symbol">Stock Symbol</label>
+        <input asp-for="PortfolioStockViewModel.Symbol" class="form-control">
+        <span asp-validation-for="PortfolioStockViewModel.Symbol"></span>
+        <span>@TempData["NewStockError"]</span>
         <br>
-        <label for="Shares">Number of Shares</label>
-        <input asp-for="Shares" class="form-control">
-        <span asp-validation-for="Shares"></span>
+        <label for="PortfolioStockViewModel.Shares">Number of Shares</label>
+        <input asp-for="PortfolioStockViewModel.Shares" class="form-control">
+        <span asp-validation-for="PortfolioStockViewModel.Shares"></span>
         <br>
-        <label for="PurchasePrice">Purchase Price</label>
-        <input asp-for="PurchasePrice" class="form-control">
-        <span asp-validation-for="PurchasePrice"></span>
+        <label for="PortfolioStockViewModel.PurchasePrice">Purchase Price</label>
+        <input asp-for="PortfolioStockViewModel.PurchasePrice" class="form-control">
+        <span asp-validation-for="PortfolioStockViewModel.PurchasePrice"></span>
         <br>
-        <input type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary">Add Stock To Portfolio</button>
     </form>
 </div>

@@ -87,20 +87,26 @@
                 else{
                     <h4>Create your bio:</h4>
                 }
-                    <form id="BioForm" action="UpdateBio" method="post">
-                        <textarea id="Bio" class="form-control" rows="5" name="Bio">@ViewBag.User.Bio</textarea>
-                        <input id="BioButton" type="submit" value="Submit">
+                    <form id="BioForm" action="UpdateBio" method="post" class="form-group">
+                        <textarea id="Bio" class="form-control" rows="5" name="Bio" class="form-control">@ViewBag.User.Bio</textarea>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Update Bio</button>
                     </form>
             </div>
             <div id="PrivateInfo">
                 <h3>Personal Info:</h3>
                 <p>Email: @ViewBag.User.Email</p>
-                <a id="Password">Like to change your password?</a>
-                <form id="PasswordForm" action="UpdatePassword" method="post">
-                    Current Password: <input type="text" id="password" name="password"><br>
-                    New Password: <input type="text" id="passwordA" name="passwordA"><br>
-                    Confirm New Password: <input type="text" id="passwordB" name="passwordB"><br>
-                    <input type="submit" value="Submit">
+                <a href="#" class="btn btn-primary" id="Password">Trying to change your password?</a>
+                <form id="PasswordForm" action="UpdatePassword" method="post" class="form-group">
+                    Current Password: <input type="text" id="password" name="password" class="form-control">
+                    <br>
+                    New Password: <input type="text" id="passwordA" name="passwordA" class="form-control">
+                    <br>
+                    Confirm New Password: <input type="text" id="passwordB" name="passwordB" class="form-control">
+
+                    <br>
+
+                    <button type="submit" class="btn btn-primary">Update Password</button>
                 </form>
                 <!-- We can use jquery to create a form text to edit the user's password. The info will be sent to the Update method in the UserController -->
             </div>

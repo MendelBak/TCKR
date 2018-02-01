@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tckr.Models
 {
-    public class StockViewModel : BaseEntity
+    public class PortfolioStockViewModel : BaseEntity
     {
         [Required]
         public string Symbol { get; set; }
@@ -14,5 +14,18 @@ namespace tckr.Models
 
         [Required]
         public double PurchasePrice { get; set; }
+    }
+
+
+    public class WatchlistStockViewModel : BaseEntity
+    {
+        [Required]
+        public string Symbol { get; set; }
+    }
+
+    public class AllStockViewModels 
+    {
+        public PortfolioStockViewModel PortfolioStockViewModel { get; set; }
+        public WatchlistStockViewModel WatchlistStockViewModel { get; set; }
     }
 }
