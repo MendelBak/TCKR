@@ -190,6 +190,52 @@ namespace tckr.Controllers
 
                     // Put User in ViewBag to display in view.
                     ViewBag.User = User;
+
+                    // Get Stock data for Portfolio and Watch List
+                    Portfolio Portfolio = _context.Portfolios.SingleOrDefault(p => p.User == User);
+            
+                    // For each Stock in Portfolio, call API based on values in database
+                    // Also, populate Stocks list for later use in ViewBag
+                    if(Portfolio != null)
+                    {
+                        ViewBag.Total = 0;
+                        foreach (Stock Stock in Portfolio.Stocks)
+                        {
+                            // Create a Dictionary object to store JSON values from API call
+                            Dictionary<string, object> Data = new Dictionary<string, object>();
+                            
+                            // Make API call
+                            WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
+                                {
+                                    Data = JsonResponse;
+                                }
+                            ).Wait();
+                            Console.WriteLine("JSON DATA BEGINS");
+                            Console.WriteLine(Data);
+                            Console.WriteLine("JSON DATA ENDS");
+
+                            // Define values for each stock to be stored in ViewBag
+                            double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
+                            
+                            Stock.Name = (string)Data["companyName"];
+                            Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
+                            Stock.CurrentPrice = CurrentPrice;
+                            Stock.CurrentValue = CurrentPrice * Stock.Shares;
+                            Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
+                            Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
+                            Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
+                            Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
+                            Stock.Week52High = Convert.ToDouble(Data["week52High"]);
+                            Stock.UpdatedAt = DateTime.Now;
+
+                            _context.SaveChanges();
+
+                            ViewBag.Total += Stock.CurrentValue;
+                        }
+                        // Store values in ViewBag for Portfolio page rendering
+                        ViewBag.Portfolio = Portfolio;
+                    }
+                
                     return View("Profile");
                 }
                 // Catch should only fire if there was an error getting/setting sesion id to ViewBag or if error getting User object from DB.
@@ -226,48 +272,49 @@ namespace tckr.Controllers
             // Retreive current User and Portfolio from the database
             User User = _context.Users.SingleOrDefault(u => u.Id == (int)id);
             Portfolio Portfolio = _context.Portfolios
-                .Include(p => p.Stocks)
                 .SingleOrDefault(p => p.User == User);
             
             // For each Stock in Portfolio, call API based on values in database
             // Also, populate Stocks list for later use in ViewBag
-            ViewBag.Total = 0;
-            foreach (Stock Stock in Portfolio.Stocks)
-            {
-                // Create a Dictionary object to store JSON values from API call
-                Dictionary<string, object> Data = new Dictionary<string, object>();
-                
-                // Make API call
-                WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
-                    {
-                        Data = JsonResponse;
-                    }
-                ).Wait();
+            // if(Portfolio != null)
+            // {
+                ViewBag.Total = 0;
+                foreach (Stock Stock in Portfolio.Stocks)
+                {
+                    // Create a Dictionary object to store JSON values from API call
+                    Dictionary<string, object> Data = new Dictionary<string, object>();
+                    
+                    // Make API call
+                    WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
+                        {
+                            Data = JsonResponse;
+                        }
+                    ).Wait();
 
-                // Define values for each stock to be stored in ViewBag
-                double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
-                
-                Stock.Name = (string)Data["companyName"];
-                Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
-                Stock.CurrentPrice = CurrentPrice;
-                Stock.CurrentValue = CurrentPrice * Stock.Shares;
-                Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
-                Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
-                Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
-                Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
-                Stock.Week52High = Convert.ToDouble(Data["week52High"]);
-                Stock.UpdatedAt = DateTime.Now;
+                    // Define values for each stock to be stored in ViewBag
+                    double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
+                    
+                    Stock.Name = (string)Data["companyName"];
+                    Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
+                    Stock.CurrentPrice = CurrentPrice;
+                    Stock.CurrentValue = CurrentPrice * Stock.Shares;
+                    Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
+                    Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
+                    Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
+                    Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
+                    Stock.Week52High = Convert.ToDouble(Data["week52High"]);
+                    Stock.UpdatedAt = DateTime.Now;
 
-                _context.SaveChanges();
+                    _context.SaveChanges();
 
-                ViewBag.Total += Stock.CurrentValue;
-            }
-            
+                    ViewBag.Total += Stock.CurrentValue;
+                }
             // Store values in ViewBag for Portfolio page rendering
             ViewBag.Portfolio = Portfolio;
             ViewBag.User = User;
-
-            return View("Portfolio");
+                return View("Portfolio");
+            // }
+        
         }
 
         [HttpPost]

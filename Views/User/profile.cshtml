@@ -4,6 +4,8 @@
 </script>
 <script>
     $(document).ready(function(){
+        $('#profilewrapper').hide();
+        $('#profilewrapper').fadeIn(1000);
         $('#PasswordForm').hide();
         $("#BioButton").hide();
         $("#Bio").click(function(){
@@ -36,10 +38,44 @@
         <div id="StockInfo">
             <div id="TopPortfolio">
                 <h4>Your Top Stocks</h4>
-                <!-- Later we'll have a list of stocks and perhaps graphs -->
+                <table>
+                    <thead>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>Number of Shares</th>
+                        <th>Purchase Price</th>
+                        <th>Purchase Value</th>
+                        <th>Current Price</th>
+                        <th>Current Value</th>
+                        <th>Gain/Loss in Price</th>
+                        <th>Gain/Loss in Value</th>
+                        <th>Gain/Loss Percentage</th>
+                        <th>Week 52 Low</th>
+                        <th>Week 52 High</th>
+                    </thead>
+                    <tbody>
+                    @foreach (var Stock in ViewBag.Portfolio.Stocks)
+                    {
+                        <tr>
+                            <td>@Stock.Symbol</td>
+                            <td>@Stock.Name</td>
+                            <td>@Stock.Shares</td>
+                            <td>@Stock.PurchasePrice.ToString("C2")</td>
+                            <td>@Stock.PurchaseValue.ToString("C2")</td>
+                            <td>@Stock.CurrentPrice.ToString("C2")</td>
+                            <td>@Stock.CurrentValue.ToString("C2")</td>
+                            <td>@Stock.GainLossPrice.ToString("C2")</td>
+                            <td>@Stock.GainLossValue.ToString("C2")</td>
+                            <td>@Stock.GainLossPercent.ToString("0.###")%</td>
+                            <td>@Stock.Week52Low.ToString("C2")</td>
+                            <td>@Stock.Week52High.ToString("C2")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
             </div>
             <div id="TopWatch">
-                <h4>Your Top Stocks To Watch</h4>
+                <h4>Your Top Interests</h4>
                 <!-- Later we'll have a list of stocks and perhaps graphs -->
             </div>
         </div>
