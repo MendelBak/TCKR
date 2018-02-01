@@ -30,9 +30,9 @@ namespace tckr.Controllers
         {
             if (HttpContext.Session.GetInt32("LoggedUserId") >= 0)
             {
+                // Nav Bar will be checking to see if ViewBag.Id is valid
                 var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
-                User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
-                ViewBag.User = User;
+                ViewBag.Id = SessionId;
             }
             return View("landing");
         }
@@ -181,76 +181,65 @@ namespace tckr.Controllers
         [Route("Profile")]
         public IActionResult Profile()
         {
+            var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+            ViewBag.Id = SessionId;
             Console.WriteLine("GO TO PROFILE");
             // Check to ensure there is a properly logged in user by checking session.
             if (HttpContext.Session.GetInt32("LoggedUserId") >= 0)
             {
-                try
+                User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
+                // Put User in ViewBag to display in view.
+                ViewBag.User = User;
+
+                // Get Stock data for Portfolio and Watch List
+                Portfolio Portfolio = _context.Portfolios
+                .Include(p => p.Stocks)
+                .SingleOrDefault(p => p.User == User);
+        
+                // For each Stock in Portfolio, call API based on values in database
+                // Also, populate Stocks list for later use in ViewBag
+                ViewBag.Total = 0;
+                foreach (Stock Stock in Portfolio.Stocks)
                 {
-                    // Get UserId from session
-                    var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
-
-                    // Get User object from DB
-                    User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
-
-                    // Put User in ViewBag to display in view.
-                    ViewBag.User = User;
-
-                    // Get Stock data for Portfolio and Watch List
-                    Portfolio Portfolio = _context.Portfolios.SingleOrDefault(p => p.User == User);
-            
-                    // For each Stock in Portfolio, call API based on values in database
-                    // Also, populate Stocks list for later use in ViewBag
-                    if(Portfolio != null)
-                    {
-                        ViewBag.Total = 0;
-                        foreach (Stock Stock in Portfolio.Stocks)
+                    // Create a Dictionary object to store JSON values from API call
+                    Dictionary<string, object> Data = new Dictionary<string, object>();
+                    
+                    // Make API call
+                    WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
                         {
-                            // Create a Dictionary object to store JSON values from API call
-                            Dictionary<string, object> Data = new Dictionary<string, object>();
-                            
-                            // Make API call
-                            WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
-                                {
-                                    Data = JsonResponse;
-                                }
-                            ).Wait();
-                            Console.WriteLine("JSON DATA BEGINS");
-                            Console.WriteLine(Data);
-                            Console.WriteLine("JSON DATA ENDS");
-
-                            // Define values for each stock to be stored in ViewBag
-                            double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
-                            
-                            Stock.Name = (string)Data["companyName"];
-                            Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
-                            Stock.CurrentPrice = CurrentPrice;
-                            Stock.CurrentValue = CurrentPrice * Stock.Shares;
-                            Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
-                            Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
-                            Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
-                            Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
-                            Stock.Week52High = Convert.ToDouble(Data["week52High"]);
-                            Stock.UpdatedAt = DateTime.Now;
-
-                            _context.SaveChanges();
-
-                            ViewBag.Total += Stock.CurrentValue;
+                            Data = JsonResponse;
                         }
-                        // Store values in ViewBag for Portfolio page rendering
-                        ViewBag.Portfolio = Portfolio;
-                    }
-                
-                    return View("Profile");
+                    ).Wait();
+
+                    // Define values for each stock to be stored in ViewBag
+                    double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
+                    
+                    Stock.Name = (string)Data["companyName"];
+                    Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
+                    Stock.CurrentPrice = CurrentPrice;
+                    Stock.CurrentValue = CurrentPrice * Stock.Shares;
+                    Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
+                    Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
+                    Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
+                    Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
+                    Stock.Week52High = Convert.ToDouble(Data["week52High"]);
+                    Stock.UpdatedAt = DateTime.Now;
+
+                    _context.SaveChanges();
+
+                    ViewBag.Total += Stock.CurrentValue;
                 }
-                // Catch should only fire if there was an error getting/setting sesion id to ViewBag or if error getting User object from DB.
-                catch
-                {
-                    return View("landing");
-                }
+                // Store values in ViewBag for Portfolio page rendering
+                ViewBag.Portfolio = Portfolio;
+                Console.WriteLine("PORTFOLIO VIEW BAG");
+                Console.WriteLine(Portfolio);
+                return View("Profile");
+            }
+            else
+            {
+                return View("landing");
             }
             // If no id is in session that means that the user is not properly logged on. Redirect to logout (to clear session, just in case) which will end up at landing page.
-            return RedirectToAction("Logout");
         }
 
 

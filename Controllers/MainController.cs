@@ -31,6 +31,9 @@ namespace tckr.Controllers
         [Route("Watchlist")]
         public IActionResult Watchlist()
         {
+            // Nav Bar will be checking to see if ViewBag.Id is valid
+            var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+            ViewBag.Id = SessionId;
             // Retreive id from Session for User query
             int? id = HttpContext.Session.GetInt32("LoggedUserId");
             
@@ -92,6 +95,9 @@ namespace tckr.Controllers
         [Route("Portfolio")]
         public IActionResult Portfolio()
         {
+            // Nav Bar will be checking to see if ViewBag.Id is valid
+            var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+            ViewBag.Id = SessionId;
             // Retreive id from Session for User query
             int? id = HttpContext.Session.GetInt32("LoggedUserId");
             
