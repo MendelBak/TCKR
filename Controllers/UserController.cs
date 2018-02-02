@@ -377,23 +377,5 @@ namespace tckr.Controllers
             }
             return RedirectToAction("Profile");
         }
-
-        [HttpGet]
-        [Route("Stock/{Symbol}")]
-        public IActionResult Stock(string Symbol)
-        {
-            // Create a Dictionary object to store JSON values from API call
-            Dictionary<string, object> Data = new Dictionary<string, object>();
-
-            // Make API call
-            WebRequest.GetQuote(Symbol, JsonResponse =>
-                {
-                    Data = JsonResponse;
-                }
-            ).Wait();
-            
-            ViewBag.Stock = Symbol;
-            return View("Stock");
-        }
     }
 }

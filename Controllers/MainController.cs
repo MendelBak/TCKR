@@ -411,5 +411,21 @@ namespace tckr.Controllers
 
             return Matches;
         }
+
+        [HttpGet]
+        [Route("Chart")]
+        public IActionResult Chart(string Symbol)
+        {
+            int? id = HttpContext.Session.GetInt32("LoggedUserId");
+
+            if (id == null)
+            {
+                return RedirectToAction("Index", "User");
+            }
+
+            ViewBag.Id = (int)id;
+            
+            return View("stock");
+        }
     }
 }

@@ -1,0 +1,113 @@
+@model tckr.Models.AllUserViewModels
+@Html.Partial("navbar")
+<!-- TradingView Widget BEGIN -->
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<script type="text/javascript">
+    new TradingView.widget({
+        "width": 980,
+        "height": 610,
+        "symbol": "NASDAQ:AAPL",
+        "interval": "D",
+        "timezone": "Etc/UTC",
+        "theme": "Light",
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "hideideas": true
+    });
+</script>
+<!-- TradingView Widget END -->
+<!-- Login Modal -->
+<!-- tabindex prevents tab from entering page and focuses it on modal -->
+<div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" keyboard="true" aria-labelledby="LoginModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div id="LoginHeader" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Login</h4>
+            </div>
+            <div id="LoginMain" class="modal-body">
+
+                <form asp-controller="User" asp-action="LoginSubmit" method="post" class="form-group">
+                    <label asp-for="Log.Email">Email</label>
+                    <input asp-for="Log.Email" placeholder="Email Address" class="form-control">
+                    <span id="emailError"></span>
+
+
+                    <label asp-for="Log.Password">Password</label>
+                    <input asp-for="Log.Password" placeholder="Password" class="form-control">
+                    <span asp-validation-for="Log.Password"></span>
+
+                    <span>@ViewBag.loginError</span>
+
+                    <br>
+
+                    <button type="submit" class="btn-block btn-sm btn-primary" id="loginSubmit">Submit</button>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--End Login Modal -->
+
+
+
+<!--Register Modal -->
+<div class="modal fade" id="RegisterModal" tabindex="-1" role="dialog" keyboard="true" aria-labelledby="RegisterModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div id="RegHeader" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Register</h4>
+            </div>
+            <div id="RegMain" class="modal-body">
+
+                <form asp-controller="User" asp-action="NewUser" method="POST" class="form-group">
+                    <label asp-for="Reg.FirstName">First Name</label>
+                    <input asp-for="Reg.FirstName" placeholder="First Name" class="form-control">
+                    <span asp-validation-for="Reg.FirstName"></span>
+
+                    <br>
+
+                    <label asp-for="Reg.LastName">Last Name</label>
+                    <input asp-for="Reg.LastName" placeholder="Last Name" class="form-control">
+                    <span asp-validation-for="Reg.LastName"></span>
+
+                    <br>
+
+                    <label asp-for="Reg.Email">Email</label>
+                    <input asp-for="Reg.Email" placeholder="Email Address" class="form-control">
+                    <span asp-validation-for="Reg.Email"></span>
+
+                    <br>
+
+                    <label asp-for="Reg.Password">Password</label>
+                    <input asp-for="Reg.Password" placeholder="Password" class="form-control">
+                    <span asp-validation-for="Reg.Password"></span>
+
+                    <br>
+
+                    <label asp-for="Reg.ConfirmPassword">Confirm Password</label>
+                    <input asp-for="Reg.ConfirmPassword" placeholder="Confirm Password" class="form-control">
+                    <span asp-validation-for="Reg.ConfirmPassword"></span>
+
+                    <span> @ViewBag.email </span>
+                    <br>
+
+                    <button type="submit" class="btn-block btn-sm btn-primary">Submit</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+<!--End Register Modal -->
