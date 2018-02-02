@@ -113,12 +113,15 @@ namespace tckr.Controllers
         [Route("LoginSubmit")]
         public IActionResult LoginSubmit(AllUserViewModels model)
         {
+            Console.WriteLine("GOT HERE");
             if (ModelState.IsValid)
             {
                 // If there are no errors upon form submit, check db for proper creds.
                 // The reason for the multiple try/catch statements is to return the proper validation error message to the user. 
                 // There are better ways to do it (AJAX in the modal), but this is a simple, although crude, method that works for now.
                 User LoggedUser;
+                Console.WriteLine("EMAIL");
+                Console.WriteLine(model.Log.Email);
                 
                 try
                 {
@@ -138,6 +141,7 @@ namespace tckr.Controllers
                     // Check hashed password. 0 = false password match.
                     if(Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Log.Password) != 0)
                     {
+                        Console.WriteLine("GOT TO END");
                         // Set user id in session for use in identification, future db calls, and for greeting the user.
                         HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.Id);
                         HttpContext.Session.SetString("LoggedUserName", LoggedUser.FirstName);
@@ -228,11 +232,53 @@ namespace tckr.Controllers
                     _context.SaveChanges();
 
                     ViewBag.Total += Stock.CurrentValue;
+
+                    // This is for the Watchlist
+                    
                 }
                 // Store values in ViewBag for Portfolio page rendering
                 ViewBag.Portfolio = Portfolio;
-                Console.WriteLine("PORTFOLIO VIEW BAG");
-                Console.WriteLine(Portfolio);
+
+                // Watchlist START
+                Watchlist Watchlist = _context.Watchlists
+                .Include(w => w.Stocks)
+                .SingleOrDefault(p => p.User == User);
+
+
+                ViewBag.Total = 0;
+                foreach (Stock Stock in Watchlist.Stocks)
+                {
+                    // Create a Dictionary object to store JSON values from API call
+                    Dictionary<string, object> Data = new Dictionary<string, object>();
+
+                    // Make API call
+                    WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
+                        {
+                            Data = JsonResponse;
+                        }
+                    ).Wait();
+
+                    // Define values for each stock to be stored in ViewBag
+                    double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
+
+                    Stock.Name = (string)Data["companyName"];
+                    Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
+                    Stock.CurrentPrice = CurrentPrice;
+                    Stock.CurrentValue = CurrentPrice * Stock.Shares;
+                    Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
+                    Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
+                    Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
+                    Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
+                    Stock.Week52High = Convert.ToDouble(Data["week52High"]);
+                    Stock.UpdatedAt = DateTime.Now;
+
+                    _context.SaveChanges();
+
+                    ViewBag.Total += Stock.CurrentValue;
+                }
+
+                // Store values in ViewBag for Portfolio page rendering
+                ViewBag.Watchlist = Watchlist;
                 return View("Profile");
             }
             else
@@ -256,12 +302,32 @@ namespace tckr.Controllers
             }
             return RedirectToAction("Profile");
         }
+        [HttpPost]
+        [Route("UpdateEmail")]
+        public IActionResult UpdateEmail(Dictionary<string,string> Data)
+        {
+            if(Data["NewEmailA"] == Data["NewEmailB"]){
+                var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
+                User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
+                User.Email = Data["NewEmailA"];
+                _context.Update(User);
+                _context.SaveChanges();
+            }
+            else{
+                @ViewBag.EmailError = "Emails need to match.";
+            }
+            return RedirectToAction("Profile");
+        }
 
         
         [HttpPost]
         [Route("UpdatePassword")]
         public IActionResult UpdatePassword(Dictionary<string,string> Data)
         {
+            Console.WriteLine("Data");
+            Console.WriteLine(Data);
+            Console.WriteLine(Data["Password"]);
+            Console.WriteLine(Data["PasswordA"]);
             if(Data["Password"] != null && Data["PasswordA"] != null && Data["PasswordB"] != null)
             {
                 var SessionId = HttpContext.Session.GetInt32("LoggedUserId");

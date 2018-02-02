@@ -7,6 +7,9 @@
     $(document).ready(function(){
         $('#portfoliowrapper').hide();
         $('#portfoliowrapper').fadeIn(1000);
+        $(".nav li").on("click", function() {
+            $('#portfoliowrapper').fadeOut(1000);
+        });
     })
 </script>
 @Html.Partial("navbar")
