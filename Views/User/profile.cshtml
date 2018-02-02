@@ -5,65 +5,170 @@
 <script>
     $(document).ready(function(){
         $('#PasswordForm').hide();
+        $('#EmailSuccess').hide();
+        $('#PasswordSuccess').hide();
+        $('#BioSuccess').hide();
+        $('#EmailForm').hide();
         $("#BioButton").hide();
         $("#Bio").click(function(){
-            $("#BioButton").show();
+            $("#BioButton").fadeIn(1000);
         })
-        $('#BioForm').submit(function() {
-            console.log(click)
+        $('#passwordbutton').click(function(){
+            $('#PasswordForm').fadeIn(1000);
+            $('#passwordbutton').fadeOut(1000);
+        })
+        $('#emailbutton').click(function(){
+            $('#EmailForm').fadeIn(1000);
+            $('#emailbutton').fadeOut(1000);
+        })
+        $('#BioForm').submit(function(e) {
             var data = {
                 Bio: $("#Bio").val()
             }
-            console.log(data);
-            console.log(data["Bio"]);
             $.ajax({
                 data: data,
                 type: 'POST',
                 url: 'UpdateBio',
                 success: function(response) {
+                    $('#BioSuccess').fadeIn(1000);
                 }
             })
+            return false;
+        })
+        $('#PasswordForm').submit(function(e){
+            e.preventDefault();
+            var data = {
+                Password: $("#Password").val(),
+                PasswordA: $("#PasswordA").val(),
+                PasswordB: $("#PasswordB").val()
+            }
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: 'UpdatePassword',
+                success: function(response) {
+                    $('#PasswordSuccess').fadeIn(1000);
+                }
+            })
+            return false;
+        })
+        $('#EmailForm').submit(function(e){
+            var data = {
+                NewEmailA: $("#NewEmailA").val(),
+                NewEmailB: $("#NewEmailB").val(),
+            }
+            $.ajax({
+                data: data,
+                type: 'POST',
+                url: 'UpdateEmail',
+                success: function(response) {
+                    $('#EmailSuccess').fadeIn(1000);
+                }
+            })
+            return false;
         })
     })
 </script>
 @model tckr.Models.User
 @Html.Partial("navbar")
-<div>
-    <h1>Welcome to your profile @ViewBag.User.FirstName</h1>
-</div>
-<div id="StockInfo">
-    <div id="TopPortfolio">
-        <h4>Your Top Stocks</h4>
-        <!-- Later we'll have a list of stocks and perhaps graphs -->
-    </div>
-    <div id="TopWatch">
-        <h4>Your Top Stocks To Watch</h4>
-        <!-- Later we'll have a list of stocks and perhaps graphs -->
-    </div>
-</div>
-<div id="UserInfo">
-    <div="Bio">
-        @if(@ViewBag.User.Bio != null){
-            <h4>Your Bio:</h4>
-        }
-        else{
-            <h4>Create your bio:</h4>
-        }
-            <form id="BioForm" action="UpdateBio" method="post">
-                <textarea id="Bio" class="form-control" rows="5" name="Bio">@ViewBag.User.Bio</textarea>
-                <input id="BioButton" type="submit" value="Submit">
-            </form>
-    </div>
-    <div id="PrivateInfo">
-        <h3>Personal Info:</h3>
-        <p>Email: @ViewBag.User.Email</p>
-        <a id="Password">Like to change your password?</a>
-        <form id="PasswordForm" action="UpdatePassword" method="post">
-            Current Password: <input type="text" id="password" name="password"><br>
-            New Password: <input type="text" id="passwordA" name="passwordA"><br>
-            Confirm New Password: <input type="text" id="passwordB" name="passwordB"><br>
-            <input type="submit" value="Submit">
-        </form>
-        <!-- We can use jquery to create a form text to edit the user's password. The info will be sent to the Update method in the UserController -->
+<div id="profilewrapper">
+    <div id="profilemain">
+        <div>
+            <h1>Welcome to your profile @ViewBag.User.FirstName</h1>
+        </div>
+        <div id="StockInfo">
+            <div id="TopPortfolio">
+                <h4>Your Top Stocks</h4>
+                <table>
+                    <thead>
+                        <th>Name</th>
+                        <th>Number of Shares</th>
+                        <th>Current Price</th>
+                        <th>Current Value</th>
+                        <th>Gain/Loss in Price</th>
+                        <th>Gain/Loss in Value</th>
+                    </thead>
+                    <tbody>
+                    @foreach (var Stock in ViewBag.Portfolio.Stocks)
+                    {
+                        <tr>
+                            <td>@Stock.Name</td>
+                            <td>@Stock.Shares</td>
+                            <td>@Stock.CurrentPrice.ToString("C2")</td>
+                            <td>@Stock.CurrentValue.ToString("C2")</td>
+                            <td>@Stock.GainLossPrice.ToString("C2")</td>
+                            <td>@Stock.GainLossValue.ToString("C2")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="TopWatch">
+            <h4>Your Top Interests</h4>
+            <table>
+                <thead>
+                    <th>Symbol</th>
+                    <th>Name</th>
+                    <th>Current Price</th>
+                    <th>Week 52 Low</th>
+                    <th>Week 52 High</th>
+                </thead>
+                <tbody>
+                    @foreach (var Stock in ViewBag.Watchlist.Stocks)
+                    {
+                        <tr>
+                            <td>@Stock.Symbol</td>
+                            <td>@Stock.Name</td>
+                            <td>@Stock.CurrentPrice.ToString("C2")</td>
+                            <td>@Stock.Week52Low.ToString("C2")</td>
+                            <td>@Stock.Week52High.ToString("C2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div id="UserInfo">
+            <div="Bio">
+                @if(@ViewBag.User.Bio != null){
+                    <h4>Your Bio:</h4>
+                }
+                else{
+                    <div id="BioInline">
+                        <h4>Create your bio: </h4>
+                        <p id="BioSuccess">Success</p>
+                    </div>
+                }
+                <form id="BioForm" action="UpdateBio" method="post" class="form-group">
+                    <textarea id="Bio" class="form-control" rows="5" name="Bio" class="form-control">@ViewBag.User.Bio</textarea>
+                    <br>
+                    <button id="BioButton" type="submit">Update Bio</button>
+                </form>
+            </div>
+            <div id="PrivateInfo">
+                <h3>Personal Info:</h3>
+                <p>Email: @ViewBag.User.Email <a id="emailbutton">Update Email</a> : 
+                <a id="passwordbutton">Update Password</a> <p id="EmailSuccess">Success</p> <p id="PasswordSuccess">Success</p> </p>
+                <form id="EmailForm" action="UpdateEmail" method="post" class="form-group">
+                    New Email: <input type="text" id="NewEmailA" name="NewEmailA" class="form-control">
+                    <br>
+                    Confirm New Email: <input type="text" id="NewEmailB" name="NewEmailB" class="form-control">
+                    <br>
+                    <p class="profileerrors">@ViewBag.EmailError</p>
+                    <button type="submit">Update Email</button>
+                </form>
+                <form id="PasswordForm" action="UpdatePassword" method="post" class="form-group">
+                    Current Password: <input type="password" id="Password" name="Password" class="form-control">
+                    <br>
+                    New Password: <input type="password" id="PasswordA" name="PasswordA" class="form-control">
+                    <br>
+                    Confirm New Password: <input type="password" id="PasswordB" name="PasswordB" class="form-control">
+                    <br>
+                    <button type="submit">Update Password</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>

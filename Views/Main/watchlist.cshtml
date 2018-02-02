@@ -1,0 +1,57 @@
+@model tckr.Models.AllStockViewModels
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+        asp-fallback-src="~/lib/jquery/dist/jquery.js"
+        asp-fallback-test="window.jQuery">
+</script>
+<script>
+    $(document).ready(function(){
+        $('#portfoliowrapper').hide();
+        $('#portfoliowrapper').fadeIn(1000);
+        $(".nav li").on("click", function() {
+            $('#portfoliowrapper').fadeOut(1000);
+        });
+    })
+</script>
+@Html.Partial("navbar")
+<div id="portfoliowrapper">
+    <h1>@ViewBag.User.FirstName&#8217;s Watchlist</h1>
+    <table>
+        <thead>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Current Price</th>
+            <th>52 Week Low</th>
+            <th>52 Week High</th>
+        </thead>
+        <tbody>
+        @foreach (var Stock in ViewBag.Watchlist.Stocks)
+        {
+            <tr>
+                <td>@Stock.Symbol</td>
+                <td>@Stock.Name</td>
+                <td>@Stock.CurrentPrice.ToString("C2")</td>
+                <td>@Stock.Week52Low.ToString("C2")</td>
+                <td>@Stock.Week52High.ToString("C2")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+<h3>Add A New Stock To Your Watchlist</h3>
+<form asp-controller="Main" asp-action="WatchlistAdd" method="POST">
+        <label for="Name">Stock Name</label>
+        <input id="Name" class="form-control">
+        <ul id="NameDropdown" class="dropdown"></ul>
+
+        <br>
+        
+        <label for="WatchlistStockViewModel.Symbol">Stock Symbol</label>
+        <input id="Symbol" asp-for="WatchlistStockViewModel.Symbol" class="form-control">
+        <ul id="SymbolDropdown" class="dropdown"></ul>
+        <span asp-validation-for="WatchlistStockViewModel.Symbol"></span>
+        <span>@TempData["NewStockError"]</span>
+
+        <br>
+
+        <button type="submit" class="btn btn-primary">Add Stock To Watchlist</button>
+</form>

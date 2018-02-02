@@ -78,4 +78,7 @@ _[Ss]cripts
 appsettings.json
 Migrations
 apikey.json
+GitHelp.txt
+PasswordAJAX
+Colors
 Views/User/PasswordAJAX

@@ -1,0 +1,78 @@
+@model tckr.Models.AllStockViewModels
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+        asp-fallback-src="~/lib/jquery/dist/jquery.js"
+        asp-fallback-test="window.jQuery">
+</script>
+<script>
+    $(document).ready(function(){
+        $('#portfoliowrapper').hide();
+        $('#portfoliowrapper').fadeIn(1000);
+        $(".nav li").on("click", function() {
+            $('#portfoliowrapper').fadeOut(1000);
+        });
+    })
+</script>
+@Html.Partial("navbar")
+<div id="portfoliowrapper" >
+    <h3>@ViewBag.User.FirstName&#8217;s Portfolio</h3>
+    <h1>Total Portfolio Value: @ViewBag.Total.ToString("C2")</h1>
+    <h3>Total Portfolio Value Gain/Loss: @ViewBag.TotalGainLossValue.ToString("C2")</h3>
+    <table class="table table-responsive">
+        <thead>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Number of Shares</th>
+            <th>Purchase Price</th>
+            <th>Purchase Value</th>
+            <th>Current Price</th>
+            <th>Current Value</th>
+            <th>Gain/Loss in Price</th>
+            <th>Gain/Loss in Value</th>
+            <th>Gain/Loss Percentage</th>
+            <th>52 Week Low</th>
+            <th>52 Week High</th>
+        </thead>
+        <tbody>
+        @foreach (var Stock in ViewBag.Portfolio.Stocks)
+        {
+            <tr>
+                <td>@Stock.Symbol</td>
+                <td>@Stock.Name</td>
+                <td>@Stock.Shares</td>
+                <td>@Stock.PurchasePrice.ToString("C2")</td>
+                <td>@Stock.PurchaseValue.ToString("C2")</td>
+                <td>@Stock.CurrentPrice.ToString("C2")</td>
+                <td>@Stock.CurrentValue.ToString("C2")</td>
+                <td>@Stock.GainLossPrice.ToString("C2")</td>
+                <td>@Stock.GainLossValue.ToString("C2")</td>
+                <td>@Stock.GainLossPercent.ToString("0.###")%</td>
+                <td>@Stock.Week52Low.ToString("C2")</td>
+                <td>@Stock.Week52High.ToString("C2")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+<h3>Add A New Stock To Your Portfolio</h3>
+    <form asp-controller="Main" asp-action="PortfolioAdd" method="POST">
+        <label for="Name">Stock Name</label>
+        <input id="Name" class="form-control">
+        <ul id="NameDropdown" class="dropdown"></ul>
+        <br>
+        <label for="PortfolioStockViewModel.Symbol">Stock Symbol</label>
+        <input id="Symbol" asp-for="PortfolioStockViewModel.Symbol" class="form-control">
+        <ul id="SymbolDropdown" class="dropdown"></ul>
+        <span asp-validation-for="PortfolioStockViewModel.Symbol"></span>
+        <span>@TempData["NewStockError"]</span>
+        <br>
+        <label for="PortfolioStockViewModel.Shares">Number of Shares</label>
+        <input asp-for="PortfolioStockViewModel.Shares" class="form-control">
+        <span asp-validation-for="PortfolioStockViewModel.Shares"></span>
+        <br>
+        <label for="PortfolioStockViewModel.PurchasePrice">Purchase Price</label>
+        <input asp-for="PortfolioStockViewModel.PurchasePrice" class="form-control">
+        <span asp-validation-for="PortfolioStockViewModel.PurchasePrice"></span>
+        <br>
+        <button type="submit" class="btn btn-primary">Add Stock To Portfolio</button>
+    </form>
+</div>
