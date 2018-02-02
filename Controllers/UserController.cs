@@ -18,7 +18,7 @@ namespace tckr.Controllers
     public class UserController : Controller
     {
         private tckrContext _context;
-        
+
         public UserController(tckrContext context)
         {
             _context = context;
@@ -34,6 +34,20 @@ namespace tckr.Controllers
                 var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
                 ViewBag.Id = SessionId;
             }
+            // If no logged in user.
+
+            // Create a Dictionary object to store JSON values from API call
+            List<Dictionary<string, object>> Data = new List<Dictionary<string, object>>();
+
+            // Make API call
+            WebRequest.GetActiveList(JsonResponse =>
+                {
+                    Data = JsonResponse;
+                }
+            ).Wait();
+
+            // Send the list of dictionaries, containing the most active stocks on the market, to the landing page to be displayed.
+            ViewBag.AllActiveStocks = Data;
             return View("landing");
         }
 
@@ -122,7 +136,7 @@ namespace tckr.Controllers
                 User LoggedUser;
                 Console.WriteLine("EMAIL");
                 Console.WriteLine(model.Log.Email);
-                
+
                 try
                 {
                     LoggedUser = _context.Users.SingleOrDefault(u => u.Email == model.Log.Email);
@@ -132,14 +146,14 @@ namespace tckr.Controllers
                 {
                     ViewBag.loginError = "Your email was incorrect.";
                     return View("landing");
-                    
+
                 }
                 // If email is correct, verify that password is correct.
                 try
                 {
                     var Hasher = new PasswordHasher<User>();
                     // Check hashed password. 0 = false password match.
-                    if(Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Log.Password) != 0)
+                    if (Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Log.Password) != 0)
                     {
                         Console.WriteLine("GOT TO END");
                         // Set user id in session for use in identification, future db calls, and for greeting the user.
@@ -199,7 +213,7 @@ namespace tckr.Controllers
                 Portfolio Portfolio = _context.Portfolios
                 .Include(p => p.Stocks)
                 .SingleOrDefault(p => p.User == User);
-        
+
                 // For each Stock in Portfolio, call API based on values in database
                 // Also, populate Stocks list for later use in ViewBag
                 ViewBag.Total = 0;
@@ -207,7 +221,7 @@ namespace tckr.Controllers
                 {
                     // Create a Dictionary object to store JSON values from API call
                     Dictionary<string, object> Data = new Dictionary<string, object>();
-                    
+
                     // Make API call
                     WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
                         {
@@ -217,7 +231,7 @@ namespace tckr.Controllers
 
                     // Define values for each stock to be stored in ViewBag
                     double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
-                    
+
                     Stock.Name = (string)Data["companyName"];
                     Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
                     Stock.CurrentPrice = CurrentPrice;
@@ -234,7 +248,7 @@ namespace tckr.Controllers
                     ViewBag.Total += Stock.CurrentValue;
 
                     // This is for the Watchlist
-                    
+
                 }
                 // Store values in ViewBag for Portfolio page rendering
                 ViewBag.Portfolio = Portfolio;
@@ -291,9 +305,10 @@ namespace tckr.Controllers
 
         [HttpPost]
         [Route("UpdateBio")]
-        public IActionResult UpdateBio(Dictionary<string,string> Data)
+        public IActionResult UpdateBio(Dictionary<string, string> Data)
         {
-            if(Data != null){
+            if (Data != null)
+            {
                 var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
                 User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
                 User.Bio = Data["Bio"];
@@ -304,31 +319,33 @@ namespace tckr.Controllers
         }
         [HttpPost]
         [Route("UpdateEmail")]
-        public IActionResult UpdateEmail(Dictionary<string,string> Data)
+        public IActionResult UpdateEmail(Dictionary<string, string> Data)
         {
-            if(Data["NewEmailA"] == Data["NewEmailB"]){
+            if (Data["NewEmailA"] == Data["NewEmailB"])
+            {
                 var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
                 User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
                 User.Email = Data["NewEmailA"];
                 _context.Update(User);
                 _context.SaveChanges();
             }
-            else{
+            else
+            {
                 @ViewBag.EmailError = "Emails need to match.";
             }
             return RedirectToAction("Profile");
         }
 
-        
+
         [HttpPost]
         [Route("UpdatePassword")]
-        public IActionResult UpdatePassword(Dictionary<string,string> Data)
+        public IActionResult UpdatePassword(Dictionary<string, string> Data)
         {
             Console.WriteLine("Data");
             Console.WriteLine(Data);
             Console.WriteLine(Data["Password"]);
             Console.WriteLine(Data["PasswordA"]);
-            if(Data["Password"] != null && Data["PasswordA"] != null && Data["PasswordB"] != null)
+            if (Data["Password"] != null && Data["PasswordA"] != null && Data["PasswordB"] != null)
             {
                 var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
                 User User = _context.Users.SingleOrDefault(u => u.Id == SessionId);
@@ -336,25 +353,26 @@ namespace tckr.Controllers
                 Console.WriteLine(User.Password);
                 var Hasher = new PasswordHasher<User>();
                 if (Hasher.VerifyHashedPassword(User, User.Password, Data["Password"]) != 0)
+                {
+                    if (Data["PasswordA"] != Data["PasswordB"])
                     {
-                        if(Data["PasswordA"] != Data["PasswordB"]){
-                            // Don't match error
-                        }
-                        else
-                        {
-                            Console.WriteLine("ABOUT TO UPDATE");
-                            PasswordHasher<Dictionary<string,string>> NewHasher = new PasswordHasher<Dictionary<string,string>>();
-                            string HashedPassword = NewHasher.HashPassword(Data, Data["Password"]);
-                            User.Password = HashedPassword;
-                            _context.Update(User);
-                            _context.SaveChanges();
-                            Console.WriteLine("NEW");
-                            Console.WriteLine(HashedPassword);
-                            return RedirectToAction("Profile");
-                        }
-                        // Set user id in session for use in identification, future db calls, and for greeting the user.
+                        // Don't match error
+                    }
+                    else
+                    {
+                        Console.WriteLine("ABOUT TO UPDATE");
+                        PasswordHasher<Dictionary<string, string>> NewHasher = new PasswordHasher<Dictionary<string, string>>();
+                        string HashedPassword = NewHasher.HashPassword(Data, Data["Password"]);
+                        User.Password = HashedPassword;
+                        _context.Update(User);
+                        _context.SaveChanges();
+                        Console.WriteLine("NEW");
+                        Console.WriteLine(HashedPassword);
                         return RedirectToAction("Profile");
                     }
+                    // Set user id in session for use in identification, future db calls, and for greeting the user.
+                    return RedirectToAction("Profile");
+                }
 
             }
             return RedirectToAction("Profile");

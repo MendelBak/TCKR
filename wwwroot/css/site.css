@@ -43,6 +43,19 @@ body.modal-open .navbar{
     text-shadow: 8px 8px 13px #3e282854;
     font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
 }
+
+/***************** LANDING PAGE *************************/
+#ActiveListWrapper{
+    text-shadow: 8px 8px 13px #3e282854;
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+    margin: 0px 100px;
+}
+#ActiveListHeader
+{
+    /* margin-top: 20px; */
+    margin: 20px 0px -30px 10px;
+}
+/***************** LANDING PAGE *********************/
 #Bio{
     width: 500px;
     /* margin-left: 60px; */
@@ -118,10 +131,10 @@ a.navbar-brand{
     -webkit-text-fill-color: transparent;
 }
 button{
+    border-radius: 5px; 
     color: #b5ad96;
     border-color: #a9a59375;
-    border-radius: 5px;
-    background: linear-gradient(to top, #c3bdad, #f5efe1, #b5ad96);
+    background: linear-gradient(to top, #330c80, #04447c, #4010a0);
 }
 #profilemain{
     padding-left: 54px;
