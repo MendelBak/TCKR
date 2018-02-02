@@ -69,17 +69,15 @@ namespace tckr.Controllers
                     }
                 ).Wait();
 
+                // We can save each Dictionary, containing each stock, to a List, then pass that List to the View using ViewBag. 
+                //This will allow more flexibility when making changes and will reduce the number of collumns in our DB table.
+
                 
                 // Define values for each stock to be stored in ViewBag
                 double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
                 
                 Stock.Name = (string)Data["companyName"];
-                Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
                 Stock.CurrentPrice = CurrentPrice;
-                Stock.CurrentValue = CurrentPrice * Stock.Shares;
-                Stock.GainLossPrice = CurrentPrice - Stock.PurchasePrice;
-                Stock.GainLossValue = (CurrentPrice - Stock.PurchasePrice) * Stock.Shares;
-                Stock.GainLossPercent = 100 * (CurrentPrice - Stock.PurchasePrice) / (Stock.PurchasePrice);
                 Stock.Week52Low = Convert.ToDouble(Data["week52Low"]);
                 Stock.Week52High = Convert.ToDouble(Data["week52High"]);
                 Stock.UpdatedAt = DateTime.Now;

@@ -13,11 +13,11 @@
     })
 </script>
 @Html.Partial("navbar")
-<div id="portfoliowrapper">
+<div id="portfoliowrapper" >
     <h3>@ViewBag.User.FirstName&#8217;s Portfolio</h3>
     <h1>Total Portfolio Value: @ViewBag.Total.ToString("C2")</h1>
     <h3>Total Portfolio Value Gain/Loss: @ViewBag.TotalGainLossValue.ToString("C2")</h3>
-    <table>
+    <table class="table table-responsive">
         <thead>
             <th>Symbol</th>
             <th>Name</th>
@@ -29,8 +29,8 @@
             <th>Gain/Loss in Price</th>
             <th>Gain/Loss in Value</th>
             <th>Gain/Loss Percentage</th>
-            <th>Week 52 Low</th>
-            <th>Week 52 High</th>
+            <th>52 Week Low</th>
+            <th>52 Week High</th>
         </thead>
         <tbody>
         @foreach (var Stock in ViewBag.Portfolio.Stocks)

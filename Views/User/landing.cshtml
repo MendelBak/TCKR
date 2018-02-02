@@ -106,4 +106,50 @@
   </div>
 </div>  
   <!--End Register Modal -->
-  <!--End Register Modal -->
+
+
+<!-- Most Active Stock List -->
+  <script>
+    $(document).ready(function(){
+        $('#portfoliowrapper').hide();
+        $('#portfoliowrapper').fadeIn(1000);
+        $(".nav li").on("click", function() {
+            $('#portfoliowrapper').fadeOut(1000);
+        });
+    })
+</script>
+<div id="ActiveListWrapper">
+  <h3 id="ActiveListHeader">Top 10 Most Active Stocks On The Market</h3>
+  <table class="table table-responsive">
+    <thead>
+      <th>Symbol</th>
+      <th>Name</th>
+      <th>Current Price</th>
+      <th>Gain/Loss Price</th>
+      <th>Gain/Loss Percentage</th>
+      <th>Total Volume (Shares)</th>
+      <th>Average Total Volume (Shares)</th>
+      <th>P/E Ratio</th>
+      <th>52 Week High</th>
+      <th>52 Week Low</th>
+    </thead>
+    <tbody>
+    @foreach(var stock in @ViewBag.AllActiveStocks) {
+      <tr>
+        <td>@stock["symbol"]</td>
+        <td>@stock["companyName"]</td>
+        <td>@stock["latestPrice"]</td>
+        <td>@stock["change"]</td>
+        <td>@stock["changePercent"]</td>
+        <!-- Format as number ("N") in order to add commas by thousands place. -->
+        <td>@stock["iexVolume"].ToString("N")</td>
+        <td>@stock["avgTotalVolume"].ToString("N")</td>
+        <td>@stock["peRatio"]</td>
+        <td>@stock["week52High"]</td>
+        <td>@stock["week52Low"]</td>
+      </tr>
+    }
+    </tbody>
+
+  </table>
+</div>
