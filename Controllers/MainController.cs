@@ -321,6 +321,7 @@ namespace tckr.Controllers
             // For each Stock in Portfolio, call API based on values in database
             // Also, populate Stocks list for later use in ViewBag
             ViewBag.Total = 0;
+            ViewBag.TotalGainLossValue = 0;
             foreach (Stock Stock in Portfolio.Stocks)
             {
                 // Create a Dictionary object to store JSON values from API call
@@ -350,6 +351,8 @@ namespace tckr.Controllers
                 _context.SaveChanges();
 
                 ViewBag.Total += Stock.CurrentValue;
+                
+                ViewBag.TotalGainLossValue += Stock.GainLossValue;
             }
 
             // Store values in ViewBag for Portfolio page rendering

@@ -55,8 +55,13 @@
 
 <h3>Add A New Stock To Your Portfolio</h3>
     <form asp-controller="Main" asp-action="PortfolioAdd" method="POST">
+        <label for="Name">Stock Name</label>
+        <input id="Name" class="form-control">
+        <ul id="NameDropdown" class="dropdown"></ul>
+        <br>
         <label for="PortfolioStockViewModel.Symbol">Stock Symbol</label>
-        <input asp-for="PortfolioStockViewModel.Symbol" class="form-control">
+        <input id="Symbol" asp-for="PortfolioStockViewModel.Symbol" class="form-control">
+        <ul id="SymbolDropdown" class="dropdown"></ul>
         <span asp-validation-for="PortfolioStockViewModel.Symbol"></span>
         <span>@TempData["NewStockError"]</span>
         <br>
