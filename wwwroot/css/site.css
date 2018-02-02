@@ -154,6 +154,11 @@ table {
     color: white;
     cursor: pointer;
 }
+.dropdown .active {
+    background-color: #337ab7;
+    color: white;
+    cursor: pointer;
+}
 .symbol {
     font-weight: bold;
 }
