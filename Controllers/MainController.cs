@@ -363,7 +363,6 @@ namespace tckr.Controllers
         [Route("Search/Name/{Name}")]
         public List<Dictionary<string, string>> SearchName(string Name)
         {
-            // Find closest matches from local values
             List<Dictionary<string, string>> Matches = new List<Dictionary<string, string>>();
             
             int limit = 10;
@@ -375,23 +374,39 @@ namespace tckr.Controllers
                 }
                 foreach (KeyValuePair<string, string> Pair in Stock)
                 {
-                    if (Pair.Value.Contains(Name))
+                    if (Pair.Key == "name" && Pair.Value.Contains(Name))
                     {
                         Matches.Add(new Dictionary<string, string>(Stock));
                         limit--;
                     }
                 }
             }
+
+            return Matches;
+        }
+
+        [HttpGet]
+        [Route("Search/Symbol/{Symbol}")]
+        public List<Dictionary<string, string>> SearchSymbol(string Symbol)
+        {
+            List<Dictionary<string, string>> Matches = new List<Dictionary<string, string>>();
             
-            // // Create a Dictionary object to store JSON values from API call
-            // Dictionary<string, object> Data = new Dictionary<string, object>();
-            
-            // // Make API call
-            // WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
-            //     {
-            //         Data = JsonResponse;
-            //     }
-            // ).Wait();
+            int limit = 10;
+            foreach (var Stock in _stocks)
+            {
+                if (limit == 0)
+                {
+                    break;
+                }
+                foreach (KeyValuePair<string, string> Pair in Stock)
+                {
+                    if (Pair.Key == "symbol" && Pair.Value.Contains(Symbol))
+                    {
+                        Matches.Add(new Dictionary<string, string>(Stock));
+                        limit--;
+                    }
+                }
+            }
 
             return Matches;
         }

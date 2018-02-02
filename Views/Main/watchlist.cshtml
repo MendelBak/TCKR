@@ -47,6 +47,7 @@
         
         <label for="WatchlistStockViewModel.Symbol">Stock Symbol</label>
         <input id="Symbol" asp-for="WatchlistStockViewModel.Symbol" class="form-control">
+        <ul id="SymbolDropdown" class="dropdown"></ul>
         <span asp-validation-for="WatchlistStockViewModel.Symbol"></span>
         <span>@TempData["NewStockError"]</span>
 
