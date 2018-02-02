@@ -1,6 +1,17 @@
 @model tckr.Models.AllUserViewModels
-@Html.Partial("header")
-@Html.Partial("navbar")
+<script>
+    $(document).ready(function(){
+      $('#landingwrapper').hide();
+      $('#landingwrapper').fadeIn(1000);
+    })
+</script>
+<div id="landingwrapper">
+  <div id="landingheader">
+    @Html.Partial("header")
+  </div>
+  @Html.Partial("navbar")
+</div>
+
 
 
 <!-- Login Modal -->
@@ -9,11 +20,11 @@
   <div class="modal-dialog modal-sm" role="dialog">
       <!-- Modal content-->
       <div class="modal-content">
-        <div class="modal-header">
+        <div id="LoginHeader" class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4>Login</h4>
         </div>
-        <div class="modal-body">
+        <div id="LoginMain" class="modal-body">
           
           <form asp-controller="User" asp-action="LoginSubmit" method="post" class="form-group">
             <label asp-for="Log.Email">Email</label>
@@ -48,11 +59,11 @@
     
       <!-- Modal content-->
       <div class="modal-content">
-        <div class="modal-header">
+        <div id="RegHeader" class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4>Register</h4>
         </div>
-        <div class="modal-body">
+        <div id="RegMain" class="modal-body">
           
             <form asp-controller="User" asp-action="NewUser" method="POST" class="form-group">
                 <label asp-for="Reg.FirstName">First Name</label>
@@ -94,4 +105,5 @@
     </div>
   </div>
 </div>  
+  <!--End Register Modal -->
   <!--End Register Modal -->

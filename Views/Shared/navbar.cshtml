@@ -5,25 +5,40 @@
     });
 </script>
 
-<nav id="navbar" class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">T C K R</a>
+@if(@ViewBag.Id != null){
+    <nav id="navbar" class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">T C K R</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="http://localhost:5000">Home</a></li>
+                <li><a href="http://localhost:5000/Watchlist">Watchlist</a></li>
+                <li><a class="active" href="http://localhost:5000/Profile">Profile</a></li>
+                <li><a href="http://localhost:5000/Portfolio">Portfolio</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                @if(@ViewBag.Id != null){
+                    <li><a href="Logout"> Logout</a></li>                
+                }
+                else{
+                    <li><a href="#LoginModal" data-toggle="modal"> Login</a></li>
+                    <li><a href="#RegisterModal" data-toggle="modal"> Sign Up</a></li>
+                }
+            </ul>
         </div>
-        <ul class="nav navbar-nav">
-            <li><a href="http://localhost:5000">Home</a></li>
-            <li><a href="http://localhost:5000/Watchlist">Watchlist</a></li>
-            <li><a class="active" href="http://localhost:5000/Profile">Profile</a></li>
-            <li><a href="http://localhost:5000/Portfolio">Portfolio</a></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            @if(@ViewBag.User != null){
-                <li><a href="Logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>                
-            }
-            else{
-                <li><a href="#LoginModal" data-toggle="modal"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                <li><a href="#RegisterModal" data-toggle="modal"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-            }
-        </ul>
-    </div>
-</nav>
+    </nav>
+}
+else{
+    <nav id="navbar" class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a id="smalltitle" class="navbar-brand" href="#">T C K R</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#LoginModal" data-toggle="modal"> Login</a></li>
+                <li><a href="#RegisterModal" data-toggle="modal"> Sign Up</a></li>
+            </ul>
+        </div>
+    </nav>
+}

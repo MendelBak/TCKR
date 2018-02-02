@@ -5,6 +5,23 @@ body.modal-open .navbar{
     -ms-filter: blur(5px);
     filter: blur(4px);
 }
+#LoginHeader{
+    background-image: url("/img/Marble.jpg");
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+}
+#LoginMain{
+    background-image: url("/img/Marble.jpg");
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+}
+#RegHeader{
+    background-image: url("/img/Marble.jpg");
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+}
+#RegMain{
+    background-image: url("/img/Marble.jpg");
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+}
+
 #test{
     background-image: url("/img/Marble.jpg");
     height: 1000px;
@@ -13,7 +30,6 @@ body.modal-open .navbar{
     width: 250px;
     border-radius: 150px;
 }
-
 #profilewrapper {
     padding-top: 22px;
     padding-bottom: 30px;
@@ -21,14 +37,55 @@ body.modal-open .navbar{
     border-radius: 10px;
     box-shadow: 3px 3px 13px #3e2828;
     background: linear-gradient(to top,#8f5e5ede, #b78d8d9c, #dcc2c287);
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
 }
-
+#portfoliowrapper {
+    text-shadow: 8px 8px 13px #3e282854;
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+}
 #Bio{
     width: 500px;
-    margin-left: 60px;
+    /* margin-left: 60px; */
     background-color: #e6d1d1;
 }
-
+#Password{
+    width: 500px;
+    background-color: #e6d1d1;
+}
+#PasswordA{
+    width: 500px;
+    background-color: #e6d1d1;
+}
+#PasswordB{
+    width: 500px;
+    background-color: #e6d1d1;
+}
+#NewEmailA{
+    width: 500px;
+    background-color: #e6d1d1;
+}
+#NewEmailB{
+    width: 500px;
+    background-color: #e6d1d1;
+}
+#BioInline{
+    display: inline-block;
+}
+#passwordbutton{
+    color: #e6d1d1;
+}
+#emailbutton{
+    color: #e6d1d1;
+}
+#EmailSuccess{
+    color: #e6d1d1;
+}
+#PasswordSuccess{
+    color: #e6d1d1;
+}
+#BioSuccess{
+    color: #e6d1d1;
+}
 #navbar{
     border: none;
     box-shadow: 3px 3px 13px #3e2828;
@@ -36,20 +93,36 @@ body.modal-open .navbar{
     height: 80px;
     background-color: #52324b99;
 }
-
 #navbar li a{
     font-size: 20px;
+    /* Backup color since webkit (for gold color gradient) is not supported on all browsers */
     color: #ffffff;
     text-shadow: 3px 3px 13px #3e2828;
-
+}
+#smalltitle{
+    text-shadow: 8px 8px 13px #3e282854;
+}
+a.navbar-brand{
+    text-shadow: 8px 8px 13px #3e282854;
 }
 
 #navbar a{
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
     font-size: 50px;
+    /* Backup color since webkit (for gold color gradient) is not supported on all browsers */
     color: #ffffff;
-    text-shadow: 3px 3px 13px #3e2828;
+    /* text-shadow: 3px 3px 13px #3e2828; */
+    margin-top: 10px;
+    background: -webkit-linear-gradient(#ffce48, #faf1d8, #8f6b09);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
-
+button{
+    color: #b5ad96;
+    border-color: #a9a59375;
+    border-radius: 5px;
+    background: linear-gradient(to top, #c3bdad, #f5efe1, #b5ad96);
+}
 #profilemain{
     padding-left: 54px;
 }
@@ -83,4 +156,57 @@ table {
 }
 .symbol {
     font-weight: bold;
+}
+.btn .btn-primary {
+    background-color: #8064A2;
+    border-color: #8064A2;
+}
+#headertitle{
+    color: #ffffff;
+    /* text-shadow: 3px 3px 13px #3e2828; */
+    background: -webkit-linear-gradient(#ffce48, #faf1d8, #8f6b09);
+    background: -moz-linear-gradient(#ffce48, #faf1d8, #8f6b09);
+    background: -o-linear-gradient(#ffce48, #faf1d8, #8f6b09);
+    background: linear-gradient(#ffce48, #faf1d8, #8f6b09);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -o-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+#headername{
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+    font-size: 165px;
+    color: #ffffff;
+    /* text-shadow: 3px 3px 13px #3e2828; */
+    background: -webkit-linear-gradient(#8c7a4a, #fff0c1, #8c7a4a);
+    background: -moz-linear-gradient(#8c7a4a, #fff0c1, #8c7a4a);
+    background: -o-linear-gradient(#8c7a4a, #fff0c1, #8c7a4a);
+    background: linear-gradient(#8c7a4a, #fff0c1, #8c7a4a);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -o-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+    -o-text-fill-color: transparent;
+    text-shadow: 8px 8px 13px #3e282854;
+}
+#headerslogan{
+    font-family: Perpetua, Baskerville, "Big Caslon", "Palatino Linotype", Palatino, "URW Palladio L", "Nimbus Roman No9 L", serif;
+    font-size: 21px;
+    color: #ffffff;
+    /* text-shadow: 3px 3px 13px #3e2828; */
+    background: -webkit-linear-gradient(#5a491a, #f6dd98, #8f6b09);
+    background: -moz-linear-gradient(#5a491a, #f6dd98, #8f6b09);
+    background: -o-linear-gradient(#5a491a, #f6dd98, #8f6b09);
+    background: linear-gradient(#5a491a, #f6dd98, #8f6b09);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -o-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+    -o-text-fill-color: transparent;
+    text-shadow: 8px 8px 13px #3e282854;
 }
