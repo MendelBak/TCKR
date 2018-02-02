@@ -39,8 +39,15 @@
 
 <h3>Add A New Stock To Your Watchlist</h3>
 <form asp-controller="Main" asp-action="WatchlistAdd" method="POST">
+        <label for="Name">Stock Name</label>
+        <input id="Name" class="form-control">
+        <ul id="NameDropdown" class="dropdown"></ul>
+
+        <br>
+        
         <label for="WatchlistStockViewModel.Symbol">Stock Symbol</label>
-        <input asp-for="WatchlistStockViewModel.Symbol" class="form-control">
+        <input id="Symbol" asp-for="WatchlistStockViewModel.Symbol" class="form-control">
+        <ul id="SymbolDropdown" class="dropdown"></ul>
         <span asp-validation-for="WatchlistStockViewModel.Symbol"></span>
         <span>@TempData["NewStockError"]</span>
 

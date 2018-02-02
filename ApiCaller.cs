@@ -66,5 +66,33 @@ namespace tckr
         }
     
 
+    
+        // Gets all stocks' symbol and name. Results returned as a List of JSON objects.
+        public static async Task GetList(Action<List<Dictionary<string, string>>> Callback)
+        {
+            // Create a temporary HttpClient connection.
+            using (var Client = new HttpClient())
+            {
+                try
+                {
+                    Client.BaseAddress = new Uri($"https://api.iextrading.com/1.0/ref-data/symbols?filter=symbol,name");
+                    HttpResponseMessage Response = await Client.GetAsync(""); // Make the actual API call.
+                    Response.EnsureSuccessStatusCode(); // Throw error if not successful.
+                    string StringResponse = await Response.Content.ReadAsStringAsync(); // Read in the response as a string.
+
+                    // Then parse the result into JSON and convert to a dictionary that we can use.
+                    // DeserializeObject will only parse the top level object, depending on the API we may need to dig deeper and continue deserializing
+                    List<Dictionary<string, string>> JsonResponse = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(StringResponse);
+
+                    // Finally, execute our callback, passing it the response we got.
+                    Callback(JsonResponse);
+                }
+                catch (HttpRequestException e)
+                {
+                    // If something went wrong, display the error.
+                    Console.WriteLine($"Request exception: {e.Message}");
+                }
+            }
+        }
     }
 }

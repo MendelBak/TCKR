@@ -18,10 +18,19 @@ namespace tckr.Controllers
     public class MainController : Controller
     {
         private tckrContext _context;
+        private static List<Dictionary<string, string>> _stocks;
         
         public MainController(tckrContext context)
         {
             _context = context;
+            _stocks = new List<Dictionary<string, string>>();
+
+            // Store API values locally
+            WebRequest.GetList(JsonResponse =>
+                {
+                    _stocks = JsonResponse;
+                }
+            ).Wait();
         }
 
 
@@ -310,6 +319,7 @@ namespace tckr.Controllers
             // For each Stock in Portfolio, call API based on values in database
             // Also, populate Stocks list for later use in ViewBag
             ViewBag.Total = 0;
+            ViewBag.TotalGainLossValue = 0;
             foreach (Stock Stock in Portfolio.Stocks)
             {
                 // Create a Dictionary object to store JSON values from API call
@@ -339,6 +349,8 @@ namespace tckr.Controllers
                 _context.SaveChanges();
 
                 ViewBag.Total += Stock.CurrentValue;
+                
+                ViewBag.TotalGainLossValue += Stock.GainLossValue;
             }
 
             // Store values in ViewBag for Portfolio page rendering
@@ -346,6 +358,58 @@ namespace tckr.Controllers
             ViewBag.User = User;
             
             return View("portfolio");
+        }
+
+        [HttpGet]
+        [Route("Search/Name/{Name}")]
+        public List<Dictionary<string, string>> SearchName(string Name)
+        {
+            List<Dictionary<string, string>> Matches = new List<Dictionary<string, string>>();
+            
+            int limit = 10;
+            foreach (var Stock in _stocks)
+            {
+                if (limit == 0)
+                {
+                    break;
+                }
+                foreach (KeyValuePair<string, string> Pair in Stock)
+                {
+                    if (Pair.Key == "name" && Pair.Value.Contains(Name))
+                    {
+                        Matches.Add(new Dictionary<string, string>(Stock));
+                        limit--;
+                    }
+                }
+            }
+
+            return Matches;
+        }
+
+        [HttpGet]
+        [Route("Search/Symbol/{Symbol}")]
+        public List<Dictionary<string, string>> SearchSymbol(string Symbol)
+        {
+            List<Dictionary<string, string>> Matches = new List<Dictionary<string, string>>();
+            
+            int limit = 10;
+            foreach (var Stock in _stocks)
+            {
+                if (limit == 0)
+                {
+                    break;
+                }
+                foreach (KeyValuePair<string, string> Pair in Stock)
+                {
+                    if (Pair.Key == "symbol" && Pair.Value.Contains(Symbol))
+                    {
+                        Matches.Add(new Dictionary<string, string>(Stock));
+                        limit--;
+                    }
+                }
+            }
+
+            return Matches;
         }
     }
 }
