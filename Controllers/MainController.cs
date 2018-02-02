@@ -18,10 +18,19 @@ namespace tckr.Controllers
     public class MainController : Controller
     {
         private tckrContext _context;
+        private static List<Dictionary<string, string>> _stocks;
         
         public MainController(tckrContext context)
         {
             _context = context;
+            _stocks = new List<Dictionary<string, string>>();
+
+            // Store API values locally
+            WebRequest.GetList(JsonResponse =>
+                {
+                    _stocks = JsonResponse;
+                }
+            ).Wait();
         }
 
 
@@ -240,6 +249,43 @@ namespace tckr.Controllers
             ViewBag.User = User;
             
             return View("Portfolio");
+        }
+
+        [HttpGet]
+        [Route("Search/Name/{Name}")]
+        public List<Dictionary<string, string>> SearchName(string Name)
+        {
+            // Find closest matches from local values
+            List<Dictionary<string, string>> Matches = new List<Dictionary<string, string>>();
+            
+            int limit = 10;
+            foreach (var Stock in _stocks)
+            {
+                if (limit == 0)
+                {
+                    break;
+                }
+                foreach (KeyValuePair<string, string> Pair in Stock)
+                {
+                    if (Pair.Value.Contains(Name))
+                    {
+                        Matches.Add(new Dictionary<string, string>(Stock));
+                        limit--;
+                    }
+                }
+            }
+            
+            // // Create a Dictionary object to store JSON values from API call
+            // Dictionary<string, object> Data = new Dictionary<string, object>();
+            
+            // // Make API call
+            // WebRequest.GetQuote(Stock.Symbol, JsonResponse =>
+            //     {
+            //         Data = JsonResponse;
+            //     }
+            // ).Wait();
+
+            return Matches;
         }
     }
 }

@@ -63,3 +63,24 @@ tbody tr {
 table {
     margin: 50px 0;
 }
+.dropdown {
+    position: absolute;
+    list-style: none;
+    background-color: white;
+    padding: 0;
+}
+.dropdown li {
+    position: relative;
+    padding: 5px 15px;
+    border-right: 1px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
+    border-left: 1px solid #cccccc;
+}
+.dropdown li:hover {
+    background-color: #337ab7;
+    color: white;
+    cursor: pointer;
+}
+.symbol {
+    font-weight: bold;
+}
