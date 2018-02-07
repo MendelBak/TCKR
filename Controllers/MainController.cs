@@ -234,6 +234,8 @@ namespace tckr.Controllers
                 
                 // Define values for each stock to be stored in ViewBag
                 double CurrentPrice = Convert.ToDouble(Data["latestPrice"]);
+
+                
                 
                 Stock.Name = (string)Data["companyName"];
                 Stock.PurchaseValue = Stock.PurchasePrice * Stock.Shares;
