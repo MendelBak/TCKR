@@ -26,6 +26,7 @@ namespace tckr.Models
         [Required]
         [Compare("Password", ErrorMessage = "Password and Confirm Password must match!")]
         [MinLength(8)]
+        [RegularExpression("(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", ErrorMessage="Password must be at least 8 characters long and contain 1 Capital letter, 1 lowercase letter, and 1 number or special character.")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 

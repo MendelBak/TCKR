@@ -24,6 +24,22 @@ namespace tckr.Controllers
             _context = context;
         }
 
+        public void MostActiveStocksAPICall() 
+        {
+           // Send the list of dictionaries, containing the most active stocks on the market, to the landing page to be displayed.
+            // Create a Dictionary object to store JSON values from API call
+            List<Dictionary<string, object>> Data = new List<Dictionary<string, object>>();
+
+            // Make API call
+            WebRequest.GetActiveList(JsonResponse =>
+                {
+                    Data = JsonResponse;
+                }
+            ).Wait();
+            // Pass data to ViewBag. WIll be iterated through on frontend.
+            ViewBag.AllActiveStocks = Data; 
+        }
+
         [HttpGet]
         [Route("")]
         public IActionResult Index()
@@ -34,20 +50,9 @@ namespace tckr.Controllers
                 var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
                 ViewBag.Id = SessionId;
             }
-            // If no logged in user.
-
-            // Create a Dictionary object to store JSON values from API call
-            List<Dictionary<string, object>> Data = new List<Dictionary<string, object>>();
-
-            // Make API call
-            WebRequest.GetActiveList(JsonResponse =>
-                {
-                    Data = JsonResponse;
-                }
-            ).Wait();
-
-            // Send the list of dictionaries, containing the most active stocks on the market, to the landing page to be displayed.
-            ViewBag.AllActiveStocks = Data;
+            // If no logged in user, return landing page.
+            // MostActiveStocksAPICall is a method defined at the top of the UserContrller.
+            MostActiveStocksAPICall();
             return View("landing");
         }
 
@@ -106,18 +111,21 @@ namespace tckr.Controllers
                     else
                     {
                         ViewBag.email = "That email is already in use. Please try again using a different one.";
+                        MostActiveStocksAPICall();
                         return View("landing");
                     }
                 }
                 // Catch should only run if there was an error with the password hashing or storing on the new user in the DB.
                 catch
                 {
+                    MostActiveStocksAPICall();
                     return View("landing");
                 }
             }
             // Else statement will run if the ModelState is invalid.
             else
             {
+                MostActiveStocksAPICall();
                 return View("landing");
             }
         }
@@ -143,6 +151,7 @@ namespace tckr.Controllers
                 catch
                 {
                     ViewBag.loginError = "Your email was incorrect.";
+                    MostActiveStocksAPICall();
                     return View("landing");
                 }
                 // If email is correct, verify that password is correct.
@@ -161,6 +170,9 @@ namespace tckr.Controllers
                     else
                     {
                         ViewBag.loginError = "Your password was incorrect.";
+
+                        MostActiveStocksAPICall();
+                        
                         return View("landing");
                     }
                 }
@@ -171,10 +183,13 @@ namespace tckr.Controllers
                     return RedirectToAction("Logout");
                 }
             }
-            // If ModelState is not valid return login and display model validation errors.
+            // If ModelState is not valid, return login and display model validation errors.
             else
             {
                 ViewBag.loginError = "Your email or password was incorrect.";
+
+                MostActiveStocksAPICall();
+
                 return View("landing");
             }
         }
@@ -197,7 +212,6 @@ namespace tckr.Controllers
         {
             var SessionId = HttpContext.Session.GetInt32("LoggedUserId");
             ViewBag.Id = SessionId;
-            Console.WriteLine("GO TO PROFILE");
             // Check to ensure there is a properly logged in user by checking session.
             if (HttpContext.Session.GetInt32("LoggedUserId") >= 0)
             {
@@ -356,7 +370,6 @@ namespace tckr.Controllers
                     }
                     else
                     {
-                        Console.WriteLine("ABOUT TO UPDATE");
                         PasswordHasher<Dictionary<string, string>> NewHasher = new PasswordHasher<Dictionary<string, string>>();
                         string HashedPassword = NewHasher.HashPassword(Data, Data["Password"]);
                         User.Password = HashedPassword;
