@@ -1,3 +1,5 @@
+# Instructions written by Mendel Bakaleynik.
+
 # PERFORM THESE INSTRUCTIONS IN ORDER. DO NOT SKIP STEPS.
 
 # Constantly update github to save work

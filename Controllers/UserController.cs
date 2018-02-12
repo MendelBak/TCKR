@@ -127,16 +127,14 @@ namespace tckr.Controllers
         [Route("LoginSubmit")]
         public IActionResult LoginSubmit(AllUserViewModels model)
         {
-            Console.WriteLine("GOT HERE");
             if (ModelState.IsValid)
             {
                 // If there are no errors upon form submit, check db for proper creds.
                 // The reason for the multiple try/catch statements is to return the proper validation error message to the user. 
                 // There are better ways to do it (AJAX in the modal), but this is a simple, although crude, method that works for now.
+                
+                // The User object is being instantiated out here in order to establish it as a global variable and accessible by all the different try/catch statments. 
                 User LoggedUser;
-                Console.WriteLine("EMAIL");
-                Console.WriteLine(model.Log.Email);
-
                 try
                 {
                     LoggedUser = _context.Users.SingleOrDefault(u => u.Email == model.Log.Email);
@@ -146,7 +144,6 @@ namespace tckr.Controllers
                 {
                     ViewBag.loginError = "Your email was incorrect.";
                     return View("landing");
-
                 }
                 // If email is correct, verify that password is correct.
                 try
@@ -155,7 +152,6 @@ namespace tckr.Controllers
                     // Check hashed password. 0 = false password match.
                     if (Hasher.VerifyHashedPassword(LoggedUser, LoggedUser.Password, model.Log.Password) != 0)
                     {
-                        Console.WriteLine("GOT TO END");
                         // Set user id in session for use in identification, future db calls, and for greeting the user.
                         HttpContext.Session.SetInt32("LoggedUserId", LoggedUser.Id);
                         HttpContext.Session.SetString("LoggedUserName", LoggedUser.FirstName);
@@ -175,7 +171,7 @@ namespace tckr.Controllers
                     return RedirectToAction("Logout");
                 }
             }
-            // If ModelState is not valid redirect to login and display model validation errors.
+            // If ModelState is not valid return login and display model validation errors.
             else
             {
                 ViewBag.loginError = "Your email or password was incorrect.";
