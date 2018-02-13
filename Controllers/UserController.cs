@@ -24,7 +24,7 @@ namespace tckr.Controllers
             _context = context;
         }
 
-        public void MostActiveStocksAPICall() 
+        private void MostActiveStocksAPICall() 
         {
            // Send the list of dictionaries, containing the most active stocks on the market, to the landing page to be displayed.
             // Create a Dictionary object to store JSON values from API call
